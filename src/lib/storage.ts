@@ -49,6 +49,15 @@ export async function uploadImageToR2(
   const fileHash = crypto.randomUUID();
   const keyStorage = `${folder}/${fileHash}.webp`;
 
+  // Salvaguarda: Se as chaves R2 não estiverem no .env, não quebra a requisição do usuário
+  if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
+    console.warn(`[R2_UPLOAD_DEV_MOCK] Credenciais R2 ausentes no .env. Simulando upload para: ${keyStorage}`);
+    return {
+      url: `https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&q=80&w=800`,
+      keyStorage: `dev-mock/${keyStorage}`,
+    };
+  }
+
   // 3. Despacho para o Cloudflare R2
   const command = new PutObjectCommand({
     Bucket: bucketName,
