@@ -1,0 +1,328 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ENUMS DO DOMÍNIO DA ONG
+// ==========================================
+
+enum Role {
+  ADMIN
+  VOLUNTARIO
+}
+
+enum Especie {
+  CACHORRO
+  GATO
+  OUTRO
+}
+
+enum Porte {
+  PEQUENO
+  MEDIO
+  GRANDE
+}
+
+enum Sexo {
+  MACHO
+  FEMEA
+}
+
+enum StatusAnimal {
+  DISPONIVEL        // Visível na vitrine para adoção
+  EM_PROCESSO       // Possui entrevista/visita em andamento
+  EM_TRATAMENTO     // Acolhido na ONG, mas ainda em recuperação veterinária
+  ADOTADO           // Processo concluído (galeria de Finais Felizes)
+  INDISPONIVEL      // Transferido ou retirado da vitrine
+  OBITO             // Registro veterinário histórico
+}
+
+enum TipoMoradia {
+  CASA_QUINTAL_FECHADO
+  CASA_QUINTAL_ABERTO
+  APARTAMENTO_TELADO
+  APARTAMENTO_SEM_TELA
+  SITIO_CHACARA
+}
+
+enum StatusAdocao {
+  RECEBIDO             // Preenchido no site
+  TRIAGEM_APROVADA     // Score alto: pronto para contato do voluntário
+  ENTREVISTA_AGENDADA  // Conversa/visita marcada
+  APROVADO             // Adoção confirmada
+  RECUSADO             // Perfil incompatível
+  CANCELADO            // Desistência do solicitante
+}
+
+enum NivelUrgencia {
+  BAIXA      // Abandonado mas estável/alimentado
+  MEDIA      // Vulnerável na rua (filhote, idoso, gestante)
+  ALTA       // Ferido ou doente precisando de atendimento
+  CRITICA    // Risco iminente de vida / atropelamento / maus-tratos graves
+}
+
+enum StatusAcolhimento {
+  PENDENTE_ANALISE
+  EM_DESLOCAMENTO
+  RESGATADO
+  ENCAMINHADO_TERCEIROS
+  FINALIZADO_SEM_RESGATE
+}
+
+enum StatusDoacao {
+  PENDENTE
+  PAGO
+  EXPIRADO
+  CANCELADO
+}
+
+// ==========================================
+// TABELAS PRINCIPAIS
+// ==========================================
+
+model User {
+  id            String   @id @default(cuid())
+  nome          String
+  email         String   @unique
+  senhaHash     String
+  cargo         Role     @default(VOLUNTARIO)
+  whatsapp      String?
+  ativo         Boolean  @default(true)
+  ultimoAcesso  DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Auditoria
+  adocoesAvaliadas      SolicitacaoAdocao[]
+  acolhimentosAtendidos ChamadoAcolhimento[]
+
+  @@map("usuarios")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@map("tokens_recuperacao_senha")
+}
+
+model Animal {
+  id                    String       @id @default(cuid())
+  nome                  String
+  slug                  String       @unique // Ex: "thor-vira-lata-medio-1a2b"
+  especie               Especie
+  raca                  String       @default("SRD (Sem Raça Definida)")
+  porte                 Porte
+  sexo                  Sexo
+  idadeEstimadaMeses    Int
+  pesoKg                Decimal?     @db.Decimal(5, 2)
+  
+  // Saúde e Comportamento
+  castrado              Boolean      @default(false)
+  vacinado              Boolean      @default(false)
+  vermifugado           Boolean      @default(false)
+  necessidadesEspeciais Boolean      @default(false)
+  descricaoSaude        String?      @db.Text
+  temperamento          String[]     // Ex: ["Dócil", "Sociável"]
+  exigeTelaProtecao     Boolean      @default(false)
+  
+  historia              String       @db.Text
+  status                StatusAnimal @default(DISPONIVEL)
+  destaqueVitrine       Boolean      @default(false)
+  ativo                 Boolean      @default(true)
+  
+  dataResgate           DateTime?
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  // Relacionamentos
+  fotos                 FotoAnimal[]
+  solicitacoesAdocao    SolicitacaoAdocao[]
+  campanhas             CampanhaDoacao[]
+  chamadoOrigem         ChamadoAcolhimento? @relation(fields: [chamadoOrigemId], references: [id], onDelete: SetNull)
+  chamadoOrigemId       String?             @unique
+
+  @@index([status, especie, porte])
+  @@index([slug])
+  @@map("animais")
+}
+
+model FotoAnimal {
+  id         String   @id @default(cuid())
+  url        String   // URL pública Cloudflare R2 (.webp)
+  keyStorage String   // Chave do bucket R2 para exclusão
+  principal  Boolean  @default(false)
+  ordem      Int      @default(0)
+  animalId   String
+  animal     Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([animalId])
+  @@map("fotos_animais")
+}
+
+model SolicitacaoAdocao {
+  id                    String       @id @default(cuid())
+  protocolo             String       @unique // Ex: "ADO-2026-8492"
+  
+  // Dados do Adotante (LGPD)
+  nomeAdotante          String
+  cpf                   String
+  email                 String
+  whatsapp              String       // Formato E.164 (5527999999999)
+  dataNascimento        DateTime
+  cep                   String
+  enderecoCompleto      String
+  bairro                String
+  cidade                String
+  estado                String       @default("ES")
+  aceitouTermosLGPD     Boolean      @default(true)
+  dataConsentimentoLGPD DateTime     @default(now())
+  ipOrigem              String?
+
+  // Respostas da Pré-Triagem (Cálculo do scoreTriagem)
+  tipoMoradia           TipoMoradia
+  imovelProprio         Boolean
+  proprietarioPermite   Boolean      @default(true)
+  todosConcordam        Boolean
+  possuiOutrosAnimais   Boolean
+  detalhesOutrosAnimais String?
+  horasAnimalSozinho    Int
+  cienteCustosMensais   Boolean
+  motivoAdocao          String       @db.Text
+
+  // Automação & Triagem
+  scoreTriagem          Int          @default(0) // 0 a 100
+  observacoesSistema    String?
+  observacoesVoluntario String?      @db.Text
+  status                StatusAdocao @default(RECEBIDO)
+
+  // FKs
+  animalId              String
+  animal                Animal       @relation(fields: [animalId], references: [id])
+  avaliadoPorId         String?
+  avaliadoPor           User?        @relation(fields: [avaliadoPorId], references: [id])
+
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  @@index([status, scoreTriagem(sort: Desc)])
+  @@index([whatsapp])
+  @@index([animalId])
+  @@index([avaliadoPorId])
+  @@map("solicitacoes_adocao")
+}
+
+model ChamadoAcolhimento {
+  id                   String            @id @default(cuid())
+  protocolo            String            @unique // Ex: "RES-2026-3104"
+  
+  // Dados do Solicitante
+  nomeSolicitante      String
+  whatsapp             String
+  podeDarLarTemporario Boolean           @default(false)
+  aceitouTermosLGPD    Boolean           @default(true)
+  ipOrigem             String?
+  
+  // Dados da Ocorrência
+  especie              Especie
+  descricaoSituacao    String            @db.Text
+  nivelUrgencia        NivelUrgencia     @default(MEDIA)
+  enderecoOcorrencia   String
+  pontoReferencia      String?
+  bairro               String
+  cidade               String
+  latitude             Decimal?          @db.Decimal(10, 8)
+  longitude            Decimal?          @db.Decimal(11, 8)
+  fotosOcorrenciaUrls  String[]          // URLs públicas no Cloudflare R2
+  fotosOcorrenciaKeys  String[]          // Chaves no R2 para expurgo futuro
+
+  // Gestão Interna
+  status               StatusAcolhimento @default(PENDENTE_ANALISE)
+  parecerONG           String?           @db.Text
+  atendidoPorId        String?
+  atendidoPor          User?             @relation(fields: [atendidoPorId], references: [id])
+  animalGerado         Animal?
+
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  @@index([status, nivelUrgencia])
+  @@index([atendidoPorId])
+  @@map("chamados_acolhimento")
+}
+
+model CampanhaDoacao {
+  id              String    @id @default(cuid())
+  titulo          String
+  slug            String    @unique
+  descricao       String    @db.Text
+  imagemCapaUrl   String?
+  metaValor       Decimal   @db.Decimal(10, 2)
+  valorArrecadado Decimal   @default(0) @db.Decimal(10, 2)
+  ativa           Boolean   @default(true)
+  dataLimite      DateTime?
+  
+  animalId        String?
+  animal          Animal?   @relation(fields: [animalId], references: [id])
+  doacoes         Doacao[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([animalId])
+  @@index([slug])
+  @@map("campanhas_doacao")
+}
+
+model Doacao {
+  id               String          @id @default(cuid())
+  nomeDoador       String          @default("Doador Anônimo")
+  emailDoador      String?
+  whatsappDoador   String?
+  anonima          Boolean         @default(false)
+  valor            Decimal         @db.Decimal(10, 2)
+  mensagemApoio    String?
+
+  // Integração Gateway Pix & Banco Central
+  externalTxId     String          @unique // ID no gateway (Asaas/MercadoPago/EFI)
+  endToEndId       String?         @unique // Identificador E2E nacional do Pix
+  pixCopiaECola    String?         @db.Text
+  qrCodeBase64     String?         @db.Text
+  status           StatusDoacao    @default(PENDENTE)
+  pagoEm           DateTime?
+
+  campanhaId       String?
+  campanha         CampanhaDoacao? @relation(fields: [campanhaId], references: [id])
+
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([status, createdAt])
+  @@index([campanhaId])
+  @@map("doacoes")
+}
+
+model LogNotificacao {
+  id           String   @id @default(cuid())
+  evento       String   // "ADOCAO_RECEBIDA", "STATUS_ATUALIZADO", "PIX_CONFIRMADO"
+  destinatario String   // WhatsApp E.164
+  payload      Json     // Cópia enviada ao webhook do n8n
+  sucesso      Boolean  @default(true)
+  erroMensagem String?
+  createdAt    DateTime @default(now())
+
+  @@index([evento, sucesso])
+  @@map("logs_notificacoes")
+}
