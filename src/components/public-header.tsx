@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PawPrint, Heart, PhoneCall, LogIn } from "lucide-react";
+import { PawPrint, Heart, PhoneCall, LogIn, Newspaper } from "lucide-react";
 
 export function PublicHeader() {
   return (
@@ -48,6 +48,13 @@ export function PublicHeader() {
           >
             <Heart className="w-4 h-4 text-amber-500" />
             <span>Doar Pix</span>
+          </Link>
+          <Link
+            href="/noticias"
+            className="text-sm font-medium text-neutral-600 hover:text-amber-800 transition flex items-center gap-1.5"
+          >
+            <Newspaper className="w-4 h-4 text-amber-600" />
+            <span>Blog & Notícias</span>
           </Link>
         </nav>
 

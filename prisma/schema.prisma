@@ -102,6 +102,7 @@ model User {
   // Auditoria
   adocoesAvaliadas      SolicitacaoAdocao[]
   acolhimentosAtendidos ChamadoAcolhimento[]
+  noticias              Noticia[]
 
   @@map("usuarios")
 }
@@ -327,4 +328,28 @@ model LogNotificacao {
 
   @@index([evento, sucesso])
   @@map("logs_notificacoes")
+}
+
+model Noticia {
+  id              String   @id @default(cuid())
+  titulo          String
+  slug            String   @unique
+  subtitulo       String?  @db.Text
+  conteudo        String   @db.Text
+  imagemCapaUrl   String?
+  imagemCapaKey   String?  // Chave no Cloudflare R2
+  categoria       String   @default("Projetos & Resgates")
+  publicado       Boolean  @default(true)
+  tempoLeituraMin Int      @default(2)
+  autorNome       String   @default("Equipe Esperança Animal")
+
+  autorId         String?
+  autor           User?    @relation(fields: [autorId], references: [id], onDelete: SetNull)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([publicado, createdAt])
+  @@index([slug])
+  @@map("noticias")
 }

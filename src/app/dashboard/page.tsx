@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Heart,
   Globe,
+  Newspaper,
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -30,6 +31,8 @@ export default async function DashboardPage() {
   const adocoesRecebidas = await prisma.solicitacaoAdocao.count({
     where: { status: "RECEBIDO" },
   });
+
+  const totalNoticias = await prisma.noticia.count();
 
   return (
     <div className="min-h-screen bg-neutral-100/60 p-6 md:p-10">
@@ -101,7 +104,7 @@ export default async function DashboardPage() {
             Módulos Operacionais & Atendimento
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Card: Central de Chamados de Resgate */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-200/80 flex flex-col justify-between hover:shadow-md transition group relative overflow-hidden">
               <div className="space-y-4">
@@ -222,6 +225,54 @@ export default async function DashboardPage() {
                   <span>Ver Painel de Adoções</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
+              </div>
+            </div>
+
+            {/* Card: Blog & Notícias da ONG */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-200/80 flex flex-col justify-between hover:shadow-md transition group">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                    <Newspaper className="w-6 h-6" />
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold">
+                    {totalNoticias} matérias
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-base font-bold text-neutral-900 group-hover:text-amber-700 transition">
+                    Blog & Notícias
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
+                    Publicação de projetos concluídos, relatos emocionantes de resgate e prestação de contas comunitária.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-6 space-y-2">
+                <Link
+                  href="/dashboard/noticias"
+                  className="w-full py-2.5 px-4 bg-amber-50 hover:bg-amber-600 text-amber-800 hover:text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
+                >
+                  <span>Gerenciar Blog</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <div className="flex items-center justify-between px-1 text-[11px]">
+                  <Link
+                    href="/dashboard/noticias/nova"
+                    className="font-semibold text-amber-700 hover:underline"
+                  >
+                    + Nova Matéria
+                  </Link>
+                  <Link
+                    href="/noticias"
+                    target="_blank"
+                    className="text-neutral-400 hover:text-neutral-700"
+                  >
+                    Ver Blog ↗
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

@@ -224,6 +224,53 @@ async function main() {
     console.log("📝 Solicitação de demonstração cadastrada: ADO-2026-9142 (Camila -> Thor)");
   }
 
+  // 6. Criar Notícias / Posts Iniciais do Blog
+  await prisma.noticia.upsert({
+    where: { slug: "novo-lar-nova-esperanca-conclusao-mudanca" },
+    update: {},
+    create: {
+      titulo: "Novo Lar, Nova Esperança: O Abrigo Conclui Mudança após 1 Ano de Trabalho",
+      slug: "novo-lar-nova-esperanca-conclusao-mudanca",
+      subtitulo: "Depois de muito esforço comunitário e apoio dos voluntários, nosso novo espaço finalmente está pronto para acolher mais de 60 pets resgatados.",
+      conteudo: `Com imensa alegria compartilhamos essa grande conquista com toda a nossa rede de apoiadores! Após mais de 12 meses de reformas estruturais, instalações elétricas seguras e a montagem de baias amplas e arejadas, concluímos a transferência definitiva dos nossos animais para a nova sede.
+
+O novo abrigo conta com solário individual para cães, gatil completamente telado com enriquecimento ambiental e uma enfermaria própria para triagem e quarentena de resgates recém-chegados das ruas.
+
+Agradecemos de coração a cada voluntário, doador e amigo que tornou esse sonho realidade com mutirões e doações. As portas estão abertas para visitas agendadas!`,
+      imagemCapaUrl: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=1200",
+      categoria: "Projetos Concluídos",
+      publicado: true,
+      tempoLeituraMin: 2,
+      autorNome: "Equipe Esperança Animal",
+      autorId: admin.id,
+      createdAt: new Date("2026-06-04T10:00:00Z"),
+    },
+  });
+
+  await prisma.noticia.upsert({
+    where: { slug: "o-resgate-emocionante-de-mag-e-yang" },
+    update: {},
+    create: {
+      titulo: "O Resgate Emocionante de Mag e Yang: Da Vulnerabilidade à Plena Recuperação",
+      slug: "o-resgate-emocionante-de-mag-e-yang",
+      subtitulo: "Encontradas em situação de extremo abandono e desnutrição, as irmãs passaram por 6 meses de cuidados intensivos e hoje inspiram esperança.",
+      conteudo: `Recebemos um chamado urgente de acolhimento relatando duas cachorrinhas em estado crítico de desnutrição, sem acesso à água e extremamente assustadas em um terreno baldio.
+
+Nossa equipe de resgate se deslocou imediatamente ao local. Mag e Yang chegaram ao abrigo pesando menos da metade do peso ideal para o porte, com anemia severa e dermatite generalizada.
+
+Após semanas de internação, suplementação vitamínica, vacinação completa e, acima de tudo, muito carinho e paciência da nossa equipe veterinária, elas se recuperaram totalmente! Hoje Mag já encontrou uma família amorosa e Yang aguarda sua vez na nossa vitrine de adoção.`,
+      imagemCapaUrl: "https://images.unsplash.com/photo-1534361960057-19889db98a1e?auto=format&fit=crop&q=80&w=1200",
+      categoria: "Histórias de Resgate",
+      publicado: true,
+      tempoLeituraMin: 3,
+      autorNome: "Equipe Esperança Animal",
+      autorId: admin.id,
+      createdAt: new Date("2026-04-22T14:30:00Z"),
+    },
+  });
+
+  console.log("📰 Notícias iniciais do blog cadastradas com sucesso!");
+
   console.log("🚀 Seed finalizado com sucesso!");
 }
 

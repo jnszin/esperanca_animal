@@ -40,6 +40,11 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/noticias" className="hover:text-emerald-400 transition">
+                  Blog & Projetos da ONG
+                </Link>
+              </li>
+              <li>
                 <Link href="/login" className="hover:text-emerald-400 transition">
                   Acesso de Voluntários
                 </Link>
