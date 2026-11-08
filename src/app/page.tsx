@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { PublicHeader } from "@/components/public-header";
 import { PublicFooter } from "@/components/public-footer";
 import { LiveRevalidator } from "@/components/live-revalidator";
+import { EsteiraAnimais } from "@/components/esteira-animais";
 import {
   PawPrint,
   Heart,
@@ -12,21 +13,20 @@ import {
 } from "lucide-react";
 
 export default async function HomePage() {
-  // Busca os animais em destaque diretamente do banco na VPS via Server Component (RSC)
-  const animaisDestaque = await prisma.animal.findMany({
+  // Busca os animais disponíveis para a esteira na Home
+  const animaisDisponiveis = await prisma.animal.findMany({
     where: {
       status: "DISPONIVEL",
-      destaqueVitrine: true,
       ativo: true,
     },
     include: {
       fotos: {
-        where: { principal: true },
+        orderBy: [{ principal: "desc" }, { ordem: "asc" }],
         take: 1,
       },
     },
-    take: 3,
-    orderBy: { createdAt: "desc" },
+    take: 12,
+    orderBy: [{ destaqueVitrine: "desc" }, { createdAt: "desc" }],
   });
 
   return (
@@ -152,64 +152,8 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {animaisDestaque.map((animal) => {
-                const fotoUrl =
-                  animal.fotos[0]?.url ||
-                  "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800";
-
-                return (
-                  <div
-                    key={animal.id}
-                    className="bg-white rounded-3xl border border-neutral-200/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group"
-                  >
-                    <div className="relative aspect-4/3 overflow-hidden bg-neutral-100">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={fotoUrl}
-                        alt={animal.nome}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                      />
-                      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-xs text-neutral-800 text-xs font-semibold px-2.5 py-1 rounded-full shadow-xs">
-                        {animal.especie === "CACHORRO" ? "🐶 Cão" : "🐱 Gato"} • {animal.porte}
-                      </div>
-                    </div>
-
-                    <div className="p-6 flex-1 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-xl font-bold text-neutral-900">{animal.nome}</h3>
-                          <span className="text-xs text-neutral-500 font-medium">
-                            {animal.sexo === "MACHO" ? "Macho" : "Fêmea"}
-                          </span>
-                        </div>
-                        <p className="text-xs text-neutral-600 line-clamp-2 leading-relaxed mb-4">
-                          {animal.historia}
-                        </p>
-
-                        <div className="flex flex-wrap gap-1.5 mb-6">
-                          {animal.temperamento.map((tag) => (
-                            <span
-                              key={tag}
-                              className="px-2.5 py-1 rounded-lg bg-neutral-100 text-neutral-600 text-[11px] font-medium"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <Link
-                        href={`/animais/${animal.slug}`}
-                        className="w-full py-3 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold rounded-xl text-center text-xs transition duration-200"
-                      >
-                        Conhecer {animal.nome}
-                      </Link>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Esteira Contínua de Animais Disponíveis */}
+            <EsteiraAnimais animais={animaisDisponiveis} />
           </div>
         </section>
 

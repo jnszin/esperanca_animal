@@ -381,19 +381,19 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
         {animal.ativo && (
           <div className="pt-3 border-t border-neutral-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex flex-wrap items-center gap-2">
-              <label className="font-bold text-neutral-700">Status Operacional:</label>
+              <label className="font-bold text-neutral-800">Status Operacional:</label>
               <select
                 value={status}
                 disabled={loadingStatus}
                 onChange={(e) => handleMudarStatus(e.target.value as StatusAnimal)}
-                className="px-3.5 py-1.5 rounded-xl border border-neutral-200 bg-neutral-50 font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="px-3.5 py-1.5 rounded-xl border border-neutral-300 bg-white font-bold text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
               >
-                <option value={StatusAnimal.DISPONIVEL}>Disponível para Adoção</option>
-                <option value={StatusAnimal.EM_PROCESSO}>Em Processo (Entrevista)</option>
-                <option value={StatusAnimal.EM_TRATAMENTO}>Em Tratamento Veterinário</option>
-                <option value={StatusAnimal.ADOTADO}>Adotado (Final Feliz)</option>
-                <option value={StatusAnimal.INDISPONIVEL}>Indisponível</option>
-                <option value={StatusAnimal.OBITO}>Óbito (Histórico)</option>
+                <option value={StatusAnimal.DISPONIVEL} className="text-neutral-900 bg-white">Disponível para Adoção</option>
+                <option value={StatusAnimal.EM_PROCESSO} className="text-neutral-900 bg-white">Em Processo (Entrevista)</option>
+                <option value={StatusAnimal.EM_TRATAMENTO} className="text-neutral-900 bg-white">Em Tratamento Veterinário</option>
+                <option value={StatusAnimal.ADOTADO} className="text-neutral-900 bg-white">Adotado (Final Feliz)</option>
+                <option value={StatusAnimal.INDISPONIVEL} className="text-neutral-900 bg-white">Indisponível</option>
+                <option value={StatusAnimal.OBITO} className="text-neutral-900 bg-white">Óbito (Histórico)</option>
               </select>
 
               {loadingStatus && <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />}
@@ -452,26 +452,40 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
                 a aba de <strong>Arquivados</strong>. Selecione o motivo oficial:
               </p>
 
-              <div>
-                <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                  Motivo da Remoção *
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-neutral-900 mb-1">
+                  Selecione o Motivo da Remoção *
                 </label>
-                <select
-                  value={motivoSelecionado}
-                  onChange={(e) => setMotivoSelecionado(e.target.value)}
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-neutral-200 bg-neutral-50 font-semibold focus:outline-none focus:ring-2 focus:ring-red-500"
-                >
-                  {MOTIVOS_PRONTOS.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
+                <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
+                  {MOTIVOS_PRONTOS.map((m) => {
+                    const isSelected = motivoSelecionado === m;
+                    return (
+                      <label
+                        key={m}
+                        className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition text-xs font-bold ${
+                          isSelected
+                            ? "bg-red-50 border-red-400 text-red-950 shadow-xs ring-1 ring-red-400"
+                            : "bg-white border-neutral-200 text-neutral-900 hover:bg-neutral-50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name={`motivo-${animal.id}`}
+                          value={m}
+                          checked={isSelected}
+                          onChange={() => setMotivoSelecionado(m)}
+                          className="w-4 h-4 text-red-600 focus:ring-red-500 border-neutral-300 shrink-0"
+                        />
+                        <span className="flex-1 text-neutral-900">{m}</span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
 
               {motivoSelecionado.startsWith("Outro") && (
-                <div>
-                  <label className="block text-xs font-bold text-neutral-700 mb-1.5">
+                <div className="pt-1">
+                  <label className="block text-xs font-bold text-neutral-900 mb-1.5">
                     Descreva o motivo detalhadamente:
                   </label>
                   <textarea
@@ -479,7 +493,7 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
                     value={outroMotivoTexto}
                     onChange={(e) => setOutroMotivoTexto(e.target.value)}
                     placeholder="Ex: Animal transferido para o abrigo de Caçapava com acompanhamento..."
-                    className="w-full text-xs p-3 rounded-xl border border-neutral-200 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full text-xs p-3 rounded-xl border border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                 </div>
               )}

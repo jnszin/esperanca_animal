@@ -165,6 +165,13 @@ export function FormEdicaoAnimal({ animal }: { animal: AnimalEdicaoProps }) {
     e.preventDefault();
     setError(null);
     setSucesso(false);
+
+    // Validação: não pode ficar sem foto na vitrine
+    if (fotosExistentes.length === 0 && novasFotos.length === 0) {
+      setError("É obrigatório manter pelo menos 1 foto real do animal na vitrine.");
+      return;
+    }
+
     setLoading(true);
 
     try {

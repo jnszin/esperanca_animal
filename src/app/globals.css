@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #171717;
 }
 
@@ -12,15 +12,41 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Evita que texto de controles nativos fique branco em navegadores com tema escuro */
+body {
+  background-color: var(--background);
+  color: #171717;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ========================================================
+   ESTEIRA CONTÍNUA DE ANIMAIS (CARROSSEL INFINITO)
+======================================================== */
+@keyframes esteiraInfinito {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.animacao-esteira {
+  display: flex;
+  width: max-content;
+  animation: esteiraInfinito 45s linear infinite;
+  will-change: transform;
+}
+
+.animacao-esteira:hover {
+  animation-play-state: paused;
+}
+
+/* Oculta barra de rolagem mantendo a funcionalidade de drag/scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

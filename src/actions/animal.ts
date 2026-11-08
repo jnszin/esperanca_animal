@@ -77,41 +77,42 @@ export async function cadastrarAnimal(formData: FormData): Promise<CriarAnimalRe
     const payload = validated.data;
     const slug = gerarSlug(payload.nome, payload.especie);
 
-    // 4. Upload de fotos para o Cloudflare R2
+    // 4. Validação e Upload de fotos para o Cloudflare R2 (Obrigatoriedade de foto real de vitrine)
     const fotosFiles = formData.getAll("fotos") as File[];
+    const fotosValidas = fotosFiles.filter(
+      (file) => file && file.size >= 10000 && file.type.startsWith("image/")
+    );
+
+    if (fotosValidas.length === 0) {
+      return {
+        success: false,
+        error: "É obrigatório anexar pelo menos uma foto real e nítida do animal (mínimo 10KB) para publicação na vitrine.",
+      };
+    }
+
     const fotosCriadas: { url: string; keyStorage: string; principal: boolean; ordem: number }[] = [];
 
     let ordem = 0;
-    for (const file of fotosFiles) {
-      if (file && file.size > 0 && file.type.startsWith("image/")) {
-        try {
-          const buffer = Buffer.from(await file.arrayBuffer());
-          const uploadRes = await uploadImageToR2(buffer, "animais", file.name);
-          fotosCriadas.push({
-            url: uploadRes.url,
-            keyStorage: uploadRes.keyStorage,
-            principal: ordem === 0,
-            ordem: ordem++,
-          });
-        } catch (uploadErr) {
-          console.error("[ANIMAL_FOTO_UPLOAD_ERROR]", uploadErr);
-        }
+    for (const file of fotosValidas) {
+      try {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const uploadRes = await uploadImageToR2(buffer, "animais", file.name);
+        fotosCriadas.push({
+          url: uploadRes.url,
+          keyStorage: uploadRes.keyStorage,
+          principal: ordem === 0,
+          ordem: ordem++,
+        });
+      } catch (uploadErr) {
+        console.error("[ANIMAL_FOTO_UPLOAD_ERROR]", uploadErr);
       }
     }
 
-    // Se nenhuma foto foi enviada, usa placeholder padrão para não quebrar a vitrine
     if (fotosCriadas.length === 0) {
-      const defaultFotoUrl =
-        payload.especie === Especie.GATO
-          ? "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=800"
-          : "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800";
-
-      fotosCriadas.push({
-        url: defaultFotoUrl,
-        keyStorage: `default/${slug}.jpg`,
-        principal: true,
-        ordem: 0,
-      });
+      return {
+        success: false,
+        error: "Falha ao processar a foto enviada. Verifique o arquivo e tente novamente.",
+      };
     }
 
     // 5. Persistência no PostgreSQL na VPS

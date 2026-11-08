@@ -115,6 +115,13 @@ export function FormCadastroAnimal({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+
+    // Validação de foto obrigatória
+    if (fotos.length === 0) {
+      setError("É obrigatório anexar pelo menos 1 foto real e de boa qualidade do animal para cadastro na vitrine.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -457,13 +464,18 @@ export function FormCadastroAnimal({
       {/* ========================================================
           5. UPLOAD DE FOTOS (ATÉ 5 COM PREVIEW)
       ======================================================== */}
-      <div className="space-y-3 pt-4 border-t border-neutral-100">
+      <div className={`space-y-3 pt-4 border-t ${fotos.length === 0 && error ? "p-4 bg-red-50/50 rounded-2xl border-red-300" : "border-neutral-100"}`}>
         <div className="flex items-center justify-between">
-          <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700">
-            Galeria de Fotos do Pet (Máximo 5)
-          </label>
+          <div className="flex items-center gap-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-800">
+              Fotos do Pet para Vitrine *
+            </label>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-red-100 text-red-800 border border-red-200">
+              Mínimo 1 foto real obrigatória
+            </span>
+          </div>
           <span className="text-xs text-neutral-500 font-medium">
-            {fotos.length} de 5 selecionadas
+            {fotos.length} de 5 fotos
           </span>
         </div>
 
