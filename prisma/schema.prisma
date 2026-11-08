@@ -141,6 +141,8 @@ model Animal {
   status                StatusAnimal @default(DISPONIVEL)
   destaqueVitrine       Boolean      @default(false)
   ativo                 Boolean      @default(true)
+  motivoArquivamento    String?      @db.Text
+  dataArquivamento      DateTime?
   
   dataResgate           DateTime?
   createdAt             DateTime     @default(now())

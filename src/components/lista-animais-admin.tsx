@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { AnimalCardAdmin, AnimalAdminData } from "./animal-card-admin";
 import { StatusAnimal, Especie } from "@prisma/client";
-import { Search, Filter, Plus, PawPrint } from "lucide-react";
+import { Search, Filter, Plus, PawPrint, Archive } from "lucide-react";
 import Link from "next/link";
 
 export function ListaAnimaisAdmin({ animais }: { animais: AnimalAdminData[] }) {
@@ -12,20 +12,31 @@ export function ListaAnimaisAdmin({ animais }: { animais: AnimalAdminData[] }) {
   const [filtroEspecie, setFiltroEspecie] = useState<string>("TODAS");
 
   const contadores = useMemo(() => {
+    const ativos = animais.filter((a) => a.ativo);
+    const arquivados = animais.filter((a) => !a.ativo);
+
     return {
-      TODOS: animais.length,
-      DISPONIVEL: animais.filter((a) => a.status === StatusAnimal.DISPONIVEL).length,
-      EM_PROCESSO: animais.filter((a) => a.status === StatusAnimal.EM_PROCESSO).length,
-      EM_TRATAMENTO: animais.filter((a) => a.status === StatusAnimal.EM_TRATAMENTO).length,
-      ADOTADO: animais.filter((a) => a.status === StatusAnimal.ADOTADO).length,
+      TODOS: ativos.length,
+      DISPONIVEL: ativos.filter((a) => a.status === StatusAnimal.DISPONIVEL).length,
+      EM_PROCESSO: ativos.filter((a) => a.status === StatusAnimal.EM_PROCESSO).length,
+      EM_TRATAMENTO: ativos.filter((a) => a.status === StatusAnimal.EM_TRATAMENTO).length,
+      ADOTADO: ativos.filter((a) => a.status === StatusAnimal.ADOTADO).length,
+      ARQUIVADOS: arquivados.length,
     };
   }, [animais]);
 
   const animaisFiltrados = useMemo(() => {
     return animais.filter((a) => {
-      // 1. Status
-      if (filtroStatus !== "TODOS" && a.status !== filtroStatus) {
-        return false;
+      // 1. Filtro de Arquivados vs Ativos
+      if (filtroStatus === "ARQUIVADOS") {
+        if (a.ativo) return false;
+      } else {
+        // Nas demais abas, só mostra animais ATIVOS
+        if (!a.ativo) return false;
+
+        if (filtroStatus !== "TODOS" && a.status !== filtroStatus) {
+          return false;
+        }
       }
 
       // 2. Espécie
@@ -33,7 +44,7 @@ export function ListaAnimaisAdmin({ animais }: { animais: AnimalAdminData[] }) {
         return false;
       }
 
-      // 3. Busca textual
+      // 3. Busca textual (nome ou raça)
       if (busca.trim()) {
         const termo = busca.toLowerCase();
         const nome = a.nome.toLowerCase();
@@ -87,14 +98,20 @@ export function ListaAnimaisAdmin({ animais }: { animais: AnimalAdminData[] }) {
         </Link>
       </div>
 
-      {/* Abas por Status */}
+      {/* Abas por Status e Aba de Arquivados */}
       <div className="flex flex-wrap items-center gap-2">
         {[
-          { id: "TODOS", label: "Todos os Pets", count: contadores.TODOS },
+          { id: "TODOS", label: "Pets Ativos", count: contadores.TODOS },
           { id: StatusAnimal.DISPONIVEL, label: "Disponíveis", count: contadores.DISPONIVEL },
           { id: StatusAnimal.EM_PROCESSO, label: "Em Processo", count: contadores.EM_PROCESSO },
           { id: StatusAnimal.EM_TRATAMENTO, label: "Em Tratamento", count: contadores.EM_TRATAMENTO },
           { id: StatusAnimal.ADOTADO, label: "Finais Felizes ❤️", count: contadores.ADOTADO },
+          {
+            id: "ARQUIVADOS",
+            label: "Fora da Vitrine / Arquivados",
+            count: contadores.ARQUIVADOS,
+            isArchive: true,
+          },
         ].map((tab) => {
           const isActive = filtroStatus === tab.id;
           return (
@@ -104,14 +121,23 @@ export function ListaAnimaisAdmin({ animais }: { animais: AnimalAdminData[] }) {
               onClick={() => setFiltroStatus(tab.id)}
               className={`px-3.5 py-2 rounded-2xl text-xs font-bold transition flex items-center gap-1.5 ${
                 isActive
-                  ? "bg-neutral-900 text-white shadow-xs"
+                  ? tab.isArchive
+                    ? "bg-amber-800 text-white shadow-xs"
+                    : "bg-neutral-900 text-white shadow-xs"
+                  : tab.isArchive
+                  ? "bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200"
                   : "bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200/80"
               }`}
             >
+              {tab.isArchive && <Archive className="w-3.5 h-3.5" />}
               <span>{tab.label}</span>
               <span
                 className={`text-[10px] px-2 py-0.5 rounded-full font-black ${
-                  isActive ? "bg-white/20 text-white" : "bg-neutral-100 text-neutral-600"
+                  isActive
+                    ? "bg-white/20 text-white"
+                    : tab.isArchive
+                    ? "bg-amber-200 text-amber-900"
+                    : "bg-neutral-100 text-neutral-600"
                 }`}
               >
                 {tab.count}
@@ -125,13 +151,21 @@ export function ListaAnimaisAdmin({ animais }: { animais: AnimalAdminData[] }) {
       {animaisFiltrados.length === 0 ? (
         <div className="bg-white p-12 rounded-3xl border border-neutral-200/80 text-center space-y-3">
           <div className="w-14 h-14 bg-neutral-100 text-neutral-400 rounded-2xl mx-auto flex items-center justify-center">
-            <PawPrint className="w-7 h-7" />
+            {filtroStatus === "ARQUIVADOS" ? (
+              <Archive className="w-7 h-7 text-neutral-400" />
+            ) : (
+              <PawPrint className="w-7 h-7" />
+            )}
           </div>
           <h3 className="text-base font-bold text-neutral-800">
-            Nenhum animal encontrado com estes filtros
+            {filtroStatus === "ARQUIVADOS"
+              ? "Nenhum animal arquivado no momento"
+              : "Nenhum animal encontrado com estes filtros"}
           </h3>
           <p className="text-xs text-neutral-500 max-w-md mx-auto">
-            {busca || filtroStatus !== "TODOS" || filtroEspecie !== "TODAS"
+            {filtroStatus === "ARQUIVADOS"
+              ? "Animais retirados da vitrine pública por adoção externa ou erro cadastral aparecerão aqui com o motivo da remoção."
+              : busca || filtroStatus !== "TODOS" || filtroEspecie !== "TODAS"
               ? "Tente ajustar o termo de busca ou filtros para ver outros animais."
               : "Cadastre o primeiro pet no abrigo clicando no botão acima."}
           </p>
@@ -139,7 +173,9 @@ export function ListaAnimaisAdmin({ animais }: { animais: AnimalAdminData[] }) {
       ) : (
         <div className="space-y-3">
           <span className="text-xs font-semibold text-neutral-500 px-1">
-            Exibindo <strong>{animaisFiltrados.length}</strong> de {animais.length} animais cadastrados
+            Exibindo <strong>{animaisFiltrados.length}</strong> de{" "}
+            {filtroStatus === "ARQUIVADOS" ? contadores.ARQUIVADOS : contadores.TODOS}{" "}
+            {filtroStatus === "ARQUIVADOS" ? "animais arquivados" : "animais ativos"}
           </span>
           <div className="grid grid-cols-1 gap-4">
             {animaisFiltrados.map((a) => (
@@ -151,4 +187,3 @@ export function ListaAnimaisAdmin({ animais }: { animais: AnimalAdminData[] }) {
     </div>
   );
 }
-

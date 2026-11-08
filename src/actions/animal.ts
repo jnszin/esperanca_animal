@@ -227,3 +227,210 @@ export async function alternarDestaqueAnimal(params: {
   }
 }
 
+/**
+ * Server Action protegida para arquivar (exclusão lógica) um animal da vitrine.
+ * Registra o motivo oficial selecionado pelo colaborador e a data do arquivamento.
+ */
+export async function arquivarAnimal(params: {
+  id: string;
+  motivo: string;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    await requireAuth();
+
+    if (!params.motivo || params.motivo.trim().length < 3) {
+      return { success: false, error: "Informe um motivo válido para arquivar o cadastro." };
+    }
+
+    const motivoNormalizado = params.motivo.trim();
+    const novoStatus = motivoNormalizado.toLowerCase().includes("adotado")
+      ? StatusAnimal.ADOTADO
+      : StatusAnimal.INDISPONIVEL;
+
+    await prisma.animal.update({
+      where: { id: params.id },
+      data: {
+        ativo: false,
+        destaqueVitrine: false,
+        status: novoStatus,
+        motivoArquivamento: motivoNormalizado,
+        dataArquivamento: new Date(),
+      },
+    });
+
+    revalidatePath("/dashboard/animais");
+    revalidatePath("/animais");
+    revalidatePath("/");
+
+    return { success: true };
+  } catch (error) {
+    console.error("[ERRO_ARQUIVAR_ANIMAL]", error);
+    return { success: false, error: "Falha ao arquivar animal. Tente novamente." };
+  }
+}
+
+/**
+ * Server Action protegida para restaurar um animal arquivado de volta à vitrine ativa.
+ */
+export async function restaurarAnimal(params: {
+  id: string;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    await requireAuth();
+
+    await prisma.animal.update({
+      where: { id: params.id },
+      data: {
+        ativo: true,
+        status: StatusAnimal.DISPONIVEL,
+        motivoArquivamento: null,
+        dataArquivamento: null,
+      },
+    });
+
+    revalidatePath("/dashboard/animais");
+    revalidatePath("/animais");
+    revalidatePath("/");
+
+    return { success: true };
+  } catch (error) {
+    console.error("[ERRO_RESTAURAR_ANIMAL]", error);
+    return { success: false, error: "Falha ao restaurar animal. Tente novamente." };
+  }
+}
+
+/**
+ * Server Action protegida para edição completa do cadastro de um pet.
+ */
+export async function editarAnimal(formData: FormData): Promise<{ success: boolean; error?: string }> {
+  try {
+    await requireAuth();
+
+    const id = formData.get("id") as string;
+    if (!id) {
+      return { success: false, error: "ID do animal não informado." };
+    }
+
+    const temperamentoRaw = formData.get("temperamento") as string;
+    let temperamentoArray: string[] = [];
+    if (temperamentoRaw) {
+      temperamentoArray = temperamentoRaw
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+    }
+
+    const rawData = {
+      nome: formData.get("nome") as string,
+      especie: formData.get("especie") as Especie,
+      raca: (formData.get("raca") as string) || "SRD (Sem Raça Definida)",
+      porte: formData.get("porte") as Porte,
+      sexo: formData.get("sexo") as Sexo,
+      idadeEstimadaMeses: Number(formData.get("idadeEstimadaMeses")),
+      pesoKg: formData.get("pesoKg") ? Number(formData.get("pesoKg")) : null,
+      castrado: formData.get("castrado") === "true",
+      vacinado: formData.get("vacinado") === "true",
+      vermifugado: formData.get("vermifugado") === "true",
+      necessidadesEspeciais: formData.get("necessidadesEspeciais") === "true",
+      descricaoSaude: (formData.get("descricaoSaude") as string) || undefined,
+      temperamento: temperamentoArray,
+      exigeTelaProtecao: formData.get("exigeTelaProtecao") === "true",
+      historia: formData.get("historia") as string,
+      status: (formData.get("status") as StatusAnimal) || StatusAnimal.DISPONIVEL,
+      destaqueVitrine: formData.get("destaqueVitrine") === "true",
+    };
+
+    const validated = animalSchema.safeParse(rawData);
+    if (!validated.success) {
+      return {
+        success: false,
+        error: validated.error.issues[0]?.message || "Dados inválidos.",
+      };
+    }
+
+    const payload = validated.data;
+
+    // Atualiza dados no banco
+    const animalAtualizado = await prisma.animal.update({
+      where: { id },
+      data: {
+        nome: payload.nome,
+        especie: payload.especie,
+        raca: payload.raca,
+        porte: payload.porte,
+        sexo: payload.sexo,
+        idadeEstimadaMeses: payload.idadeEstimadaMeses,
+        pesoKg: payload.pesoKg ?? null,
+        castrado: payload.castrado,
+        vacinado: payload.vacinado,
+        vermifugado: payload.vermifugado,
+        necessidadesEspeciais: payload.necessidadesEspeciais,
+        descricaoSaude: payload.descricaoSaude ?? null,
+        temperamento: payload.temperamento,
+        exigeTelaProtecao: payload.exigeTelaProtecao,
+        historia: payload.historia,
+        status: payload.status,
+        destaqueVitrine: payload.destaqueVitrine,
+      },
+    });
+
+    // Se novas fotos foram enviadas, faz upload no R2
+    const novasFotos = formData.getAll("novasFotos") as File[];
+    for (const file of novasFotos) {
+      if (file && file.size > 0 && file.type.startsWith("image/")) {
+        try {
+          const buffer = Buffer.from(await file.arrayBuffer());
+          const uploadRes = await uploadImageToR2(buffer, "animais", file.name);
+          await prisma.fotoAnimal.create({
+            data: {
+              animalId: id,
+              url: uploadRes.url,
+              keyStorage: uploadRes.keyStorage,
+              principal: false,
+              ordem: 1,
+            },
+          });
+        } catch (uploadErr) {
+          console.error("[EDITAR_ANIMAL_FOTO_ERROR]", uploadErr);
+        }
+      }
+    }
+
+    revalidatePath("/animais");
+    revalidatePath(`/animais/${animalAtualizado.slug}`);
+    revalidatePath("/dashboard/animais");
+    revalidatePath(`/dashboard/animais/${id}/editar`);
+    revalidatePath("/");
+
+    return { success: true };
+  } catch (error) {
+    console.error("[ERRO_EDITAR_ANIMAL]", error);
+    return { success: false, error: "Falha ao salvar edições do animal." };
+  }
+}
+
+/**
+ * Server Action protegida para exclusão de foto específica do animal.
+ */
+export async function excluirFotoAnimal(params: {
+  fotoId: string;
+  animalId: string;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    await requireAuth();
+
+    await prisma.fotoAnimal.delete({
+      where: { id: params.fotoId },
+    });
+
+    revalidatePath(`/dashboard/animais/${params.animalId}/editar`);
+    revalidatePath("/animais");
+    revalidatePath("/dashboard/animais");
+
+    return { success: true };
+  } catch (error) {
+    console.error("[ERRO_EXCLUIR_FOTO_ANIMAL]", error);
+    return { success: false, error: "Falha ao excluir foto." };
+  }
+}
+

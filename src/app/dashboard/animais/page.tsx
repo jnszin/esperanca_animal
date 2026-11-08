@@ -28,12 +28,12 @@ export default async function DashboardAnimaisPage() {
     pesoKg: animal.pesoKg ? Number(animal.pesoKg) : null,
   }));
 
-  // KPIs
-  const total = animais.length;
-  const disponiveis = animais.filter((a) => a.status === "DISPONIVEL").length;
-  const emProcesso = animais.filter((a) => a.status === "EM_PROCESSO").length;
-  const emTratamento = animais.filter((a) => a.status === "EM_TRATAMENTO").length;
-  const adotados = animais.filter((a) => a.status === "ADOTADO").length;
+  // KPIs de Gestão
+  const totalAtivos = animais.filter((a) => a.ativo).length;
+  const disponiveis = animais.filter((a) => a.ativo && a.status === "DISPONIVEL").length;
+  const emProcesso = animais.filter((a) => a.ativo && a.status === "EM_PROCESSO").length;
+  const emTratamento = animais.filter((a) => a.ativo && a.status === "EM_TRATAMENTO").length;
+  const arquivados = animais.filter((a) => !a.ativo).length;
 
   return (
     <div className="min-h-screen bg-neutral-100/60 p-6 md:p-10">
@@ -90,8 +90,8 @@ export default async function DashboardAnimaisPage() {
         {/* Cards de Métricas e KPIs */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
           <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200/80 shadow-2xs">
-            <span className="text-[11px] font-semibold text-neutral-500 block">Total de Animais</span>
-            <span className="text-2xl font-black text-neutral-900 mt-1 block">{total}</span>
+            <span className="text-[11px] font-semibold text-neutral-500 block">Pets Ativos</span>
+            <span className="text-2xl font-black text-neutral-900 mt-1 block">{totalAtivos}</span>
           </div>
 
           <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200/80 shadow-2xs">
@@ -110,8 +110,8 @@ export default async function DashboardAnimaisPage() {
           </div>
 
           <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200/80 shadow-2xs">
-            <span className="text-[11px] font-semibold text-blue-600 block">Finais Felizes ❤️</span>
-            <span className="text-2xl font-black text-blue-700 mt-1 block">{adotados}</span>
+            <span className="text-[11px] font-semibold text-neutral-600 block">Fora da Vitrine</span>
+            <span className="text-2xl font-black text-neutral-700 mt-1 block">{arquivados}</span>
           </div>
         </div>
 

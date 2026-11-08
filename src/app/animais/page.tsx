@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PublicHeader } from "@/components/public-header";
 import { PublicFooter } from "@/components/public-footer";
+import { LiveRevalidator } from "@/components/live-revalidator";
 import { Especie, Porte, Sexo, StatusAnimal, Prisma } from "@prisma/client";
 import {
   PawPrint,
@@ -54,6 +55,7 @@ export default async function AnimaisPage({ searchParams }: AnimaisPageProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50 text-neutral-900">
+      <LiveRevalidator intervalMs={45000} />
       <PublicHeader />
 
       <main className="flex-1 py-12">

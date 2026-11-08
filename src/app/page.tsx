@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PublicHeader } from "@/components/public-header";
 import { PublicFooter } from "@/components/public-footer";
+import { LiveRevalidator } from "@/components/live-revalidator";
 import {
   PawPrint,
   Heart,
@@ -30,6 +31,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50 text-neutral-900">
+      <LiveRevalidator intervalMs={45000} />
       <PublicHeader />
 
       <main className="flex-1">
