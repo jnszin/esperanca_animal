@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import { Especie, Porte, Sexo } from "@prisma/client";
-import { ChevronLeft, ChevronRight, Sparkles, Heart } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 
 export interface AnimalEsteira {
   id: string;
@@ -21,7 +21,6 @@ export interface AnimalEsteira {
 
 export function EsteiraAnimais({ animais }: { animais: AnimalEsteira[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [estaPausada, setEstaPausada] = useState(false);
 
   if (!animais || animais.length === 0) {
     return null;
@@ -41,40 +40,29 @@ export function EsteiraAnimais({ animais }: { animais: AnimalEsteira[] }) {
 
   return (
     <div className="relative group">
-      {/* Controles de Navegação Manual e Aviso de Pausa */}
-      <div className="flex items-center justify-between mb-4 px-4 sm:px-0">
-        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
-          <span>
-            {estaPausada ? "Esteira pausada (clique para adotar)" : "Esteira contínua • Passe o mouse para pausar"}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => scrollManual("left")}
-            aria-label="Rolar para esquerda"
-            className="w-9 h-9 rounded-full bg-white hover:bg-neutral-100 text-neutral-700 shadow-sm border border-neutral-200 flex items-center justify-center transition active:scale-95"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollManual("right")}
-            aria-label="Rolar para direita"
-            className="w-9 h-9 rounded-full bg-white hover:bg-neutral-100 text-neutral-700 shadow-sm border border-neutral-200 flex items-center justify-center transition active:scale-95"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
+      {/* Controles de Navegação Manual */}
+      <div className="flex items-center justify-end mb-4 px-4 sm:px-0 gap-2">
+        <button
+          type="button"
+          onClick={() => scrollManual("left")}
+          aria-label="Rolar para esquerda"
+          className="w-9 h-9 rounded-full bg-white hover:bg-neutral-100 text-neutral-700 shadow-sm border border-neutral-200 flex items-center justify-center transition active:scale-95"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => scrollManual("right")}
+          aria-label="Rolar para direita"
+          className="w-9 h-9 rounded-full bg-white hover:bg-neutral-100 text-neutral-700 shadow-sm border border-neutral-200 flex items-center justify-center transition active:scale-95"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Trilho da Esteira (Overflow hidden com animação contínua) */}
       <div
         ref={containerRef}
-        onMouseEnter={() => setEstaPausada(true)}
-        onMouseLeave={() => setEstaPausada(false)}
         className="overflow-x-auto no-scrollbar py-4"
       >
         <div className="animacao-esteira flex gap-6">
