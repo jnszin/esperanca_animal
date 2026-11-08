@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { atualizarStatusChamado } from "@/actions/chamado";
 import { StatusAcolhimento, NivelUrgencia, Especie } from "@prisma/client";
 import {
@@ -13,6 +14,7 @@ import {
   ChevronDown,
   CheckCircle2,
   Loader2,
+  PawPrint,
 } from "lucide-react";
 
 interface ChamadoData {
@@ -290,18 +292,28 @@ export function ChamadoCardAdmin({ chamado }: { chamado: ChamadoData }) {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setMostrarParecer(!mostrarParecer)}
-          className="text-xs font-semibold text-neutral-600 hover:text-neutral-900 flex items-center gap-1 self-start sm:self-auto"
-        >
-          <span>{mostrarParecer ? "Ocultar Parecer" : "Adicionar Parecer da ONG"}</span>
-          <ChevronDown
-            className={`w-3.5 h-3.5 transition-transform ${
-              mostrarParecer ? "rotate-180" : ""
-            }`}
-          />
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Link
+            href={`/dashboard/animais/novo?chamadoId=${chamado.id}&especie=${chamado.especie}`}
+            className="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200 inline-flex items-center gap-1.5 transition"
+          >
+            <PawPrint className="w-3.5 h-3.5" />
+            <span>Cadastrar como Pet</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setMostrarParecer(!mostrarParecer)}
+            className="text-xs font-semibold text-neutral-600 hover:text-neutral-900 flex items-center gap-1"
+          >
+            <span>{mostrarParecer ? "Ocultar Parecer" : "Adicionar Parecer"}</span>
+            <ChevronDown
+              className={`w-3.5 h-3.5 transition-transform ${
+                mostrarParecer ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Campo de Parecer da ONG */}

@@ -3,8 +3,9 @@
 import { prisma } from "@/lib/prisma";
 import { adocaoSchema, AdocaoFormData } from "@/schemas/adocao";
 import { calcularScoreTriagem } from "@/lib/triagem";
-import { notificarNovaAdocao } from "@/lib/n8n";
-import { StatusAnimal } from "@prisma/client";
+import { notificarNovaAdocao, notificarAtualizacaoAdocao } from "@/lib/n8n";
+import { StatusAnimal, StatusAdocao } from "@prisma/client";
+import { requireAuth } from "@/lib/auth-checks";
 import { revalidatePath } from "next/cache";
 
 export type SubmeterAdocaoResult = {
@@ -147,6 +148,106 @@ export async function submeterSolicitacaoAdocao(
     return {
       success: false,
       error: "Ocorreu uma instabilidade ao salvar sua solicitação. Tente novamente.",
+    };
+  }
+}
+
+/**
+ * Server Action protegida para voluntários/administradores avaliarem
+ * candidaturas de adoção, atualizarem o status e registrarem pareceres.
+ */
+export async function atualizarStatusAdocao(params: {
+  solicitacaoId: string;
+  status: StatusAdocao;
+  observacoesVoluntario?: string;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const user = await requireAuth();
+
+    const solicitacao = await prisma.solicitacaoAdocao.findUnique({
+      where: { id: params.solicitacaoId },
+      include: { animal: true },
+    });
+
+    if (!solicitacao) {
+      return { success: false, error: "Solicitação de adoção não encontrada." };
+    }
+
+    // 1. Atualiza a solicitação com novo status, parecer e avaliador
+    await prisma.solicitacaoAdocao.update({
+      where: { id: params.solicitacaoId },
+      data: {
+        status: params.status,
+        observacoesVoluntario: params.observacoesVoluntario ?? undefined,
+        avaliadoPorId: user.id,
+      },
+    });
+
+    // 2. Atualização em cascata do status do animal no catálogo
+    if (params.status === StatusAdocao.APROVADO) {
+      // Se a adoção foi confirmada, marca o pet como ADOTADO
+      await prisma.animal.update({
+        where: { id: solicitacao.animalId },
+        data: { status: StatusAnimal.ADOTADO },
+      });
+    } else if (params.status === StatusAdocao.ENTREVISTA_AGENDADA) {
+      // Se a entrevista foi marcada e o pet estava DISPONIVEL, move para EM_PROCESSO
+      if (solicitacao.animal.status === StatusAnimal.DISPONIVEL) {
+        await prisma.animal.update({
+          where: { id: solicitacao.animalId },
+          data: { status: StatusAnimal.EM_PROCESSO },
+        });
+      }
+    } else if (
+      params.status === StatusAdocao.RECUSADO ||
+      params.status === StatusAdocao.CANCELADO
+    ) {
+      // Se o pet estava em processo devido a esta solicitação, verifica se há outras em andamento
+      if (solicitacao.animal.status === StatusAnimal.EM_PROCESSO) {
+        const outrasEmAndamento = await prisma.solicitacaoAdocao.count({
+          where: {
+            animalId: solicitacao.animalId,
+            id: { not: solicitacao.id },
+            status: {
+              in: [StatusAdocao.ENTREVISTA_AGENDADA, StatusAdocao.TRIAGEM_APROVADA],
+            },
+          },
+        });
+
+        // Se não houver outras pessoas em entrevista, devolve para a vitrine
+        if (outrasEmAndamento === 0) {
+          await prisma.animal.update({
+            where: { id: solicitacao.animalId },
+            data: { status: StatusAnimal.DISPONIVEL },
+          });
+        }
+      }
+    }
+
+    // 3. Notificação opcional no n8n (WhatsApp com feedback de status)
+    notificarAtualizacaoAdocao({
+      protocolo: solicitacao.protocolo,
+      nomeAdotante: solicitacao.nomeAdotante,
+      whatsapp: solicitacao.whatsapp,
+      nomeAnimal: solicitacao.animal.nome,
+      novoStatus: params.status,
+      observacoes: params.observacoesVoluntario,
+    }).catch((err) => {
+      console.warn("[N8N_NOTIFICACAO_UPDATE_ERRO]", err);
+    });
+
+    // 4. Revalidações de Cache do Next.js
+    revalidatePath("/dashboard/adocoes");
+    revalidatePath("/dashboard");
+    revalidatePath("/animais");
+    revalidatePath(`/animais/${solicitacao.animal.slug}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("[ERRO_ATUALIZAR_STATUS_ADOCAO]", error);
+    return {
+      success: false,
+      error: "Falha ao atualizar status da adoção. Tente novamente.",
     };
   }
 }

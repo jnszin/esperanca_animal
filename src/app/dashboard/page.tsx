@@ -165,15 +165,29 @@ export default async function DashboardPage() {
                 </div>
               </div>
 
-              <div className="pt-6">
+              <div className="pt-6 space-y-2">
                 <Link
-                  href="/animais"
-                  target="_blank"
+                  href="/dashboard/animais"
                   className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
                 >
-                  <span>Ver Vitrine Pública</span>
+                  <span>Gerenciar Animais</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
+                <div className="flex items-center justify-between px-1 text-[11px]">
+                  <Link
+                    href="/dashboard/animais/novo"
+                    className="font-semibold text-emerald-600 hover:underline"
+                  >
+                    + Novo Pet
+                  </Link>
+                  <Link
+                    href="/animais"
+                    target="_blank"
+                    className="text-neutral-400 hover:text-neutral-700"
+                  >
+                    Vitrine pública ↗
+                  </Link>
+                </div>
               </div>
             </div>
 

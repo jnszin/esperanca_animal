@@ -1,4 +1,4 @@
-import { PrismaClient, Role, Especie, Porte, Sexo, StatusAnimal } from "@prisma/client";
+import { PrismaClient, Role, Especie, Porte, Sexo, StatusAnimal, TipoMoradia, StatusAdocao } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -180,6 +180,48 @@ async function main() {
     });
 
     console.log(`🐾 Animal cadastrado na vitrine: ${animal.nome} (${animal.especie})`);
+  }
+
+  // 4. Cadastrar Solicitações de Demonstração para a Fase 5 (Backoffice de Adoções)
+  const thor = await prisma.animal.findUnique({
+    where: { slug: "thor-vira-lata-caramelo-porte-medio" },
+  });
+
+  if (thor) {
+    await prisma.solicitacaoAdocao.upsert({
+      where: { protocolo: "ADO-2026-9142" },
+      update: {},
+      create: {
+        protocolo: "ADO-2026-9142",
+        nomeAdotante: "Camila Fernandes de Oliveira",
+        cpf: "12345678901",
+        email: "camila.oliveira@exemplo.com",
+        whatsapp: "5527998881234",
+        dataNascimento: new Date("1996-05-14"),
+        cep: "29060010",
+        enderecoCompleto: "Rua das Palmeiras, 142, Apto 302",
+        bairro: "Jardim da Penha",
+        cidade: "Vitória",
+        estado: "ES",
+        aceitouTermosLGPD: true,
+        tipoMoradia: TipoMoradia.APARTAMENTO_TELADO,
+        imovelProprio: true,
+        proprietarioPermite: true,
+        todosConcordam: true,
+        possuiOutrosAnimais: false,
+        horasAnimalSozinho: 4,
+        cienteCustosMensais: true,
+        motivoAdocao:
+          "Procuro um cão dócil para caminhadas diárias e companhia. Meu apartamento é telado e trabalho de home office.",
+        scoreTriagem: 95,
+        observacoesSistema:
+          "Perfil de alta compatibilidade: Apartamento seguro e telado, tempo sozinho reduzido e total concordância familiar.",
+        status: StatusAdocao.TRIAGEM_APROVADA,
+        animalId: thor.id,
+      },
+    });
+
+    console.log("📝 Solicitação de demonstração cadastrada: ADO-2026-9142 (Camila -> Thor)");
   }
 
   console.log("🚀 Seed finalizado com sucesso!");
