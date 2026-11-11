@@ -3,7 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { chamadoSchema } from "@/schemas/chamado";
 import { uploadImageToR2 } from "@/lib/storage";
-import { notificarNovoChamado } from "@/lib/n8n";
+import { gerarLinkWhatsappChamado } from "@/lib/chamado-labels";
+import { sanitizarWhatsappE164 } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { Especie, NivelUrgencia, StatusAcolhimento } from "@prisma/client";
 import { requireAuth } from "@/lib/auth-checks";
@@ -14,11 +15,26 @@ export type CriarChamadoResult = {
   error?: string;
 };
 
+async function gerarProtocoloUnicoChamado(): Promise<string> {
+  const anoAtual = new Date().getFullYear();
+
+  for (let i = 0; i < 6; i++) {
+    const codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
+    const candidato = `RES-${anoAtual}-${codigoAleatorio}`;
+    const existe = await prisma.chamadoAcolhimento.findUnique({
+      where: { protocolo: candidato },
+      select: { id: true },
+    });
+    if (!existe) return candidato;
+  }
+
+  return `RES-${anoAtual}-${Date.now().toString().slice(-5)}`;
+}
+
 export async function criarChamadoAcolhimento(
   formData: FormData
 ): Promise<CriarChamadoResult> {
   try {
-    // 1. Extração dos campos de texto do FormData
     const rawData = {
       nomeSolicitante: formData.get("nomeSolicitante") as string,
       whatsapp: formData.get("whatsapp") as string,
@@ -31,11 +47,16 @@ export async function criarChamadoAcolhimento(
       pontoReferencia: (formData.get("pontoReferencia") as string) || undefined,
       bairro: formData.get("bairro") as string,
       cidade: formData.get("cidade") as string,
-      latitude: formData.get("latitude") ? Number(formData.get("latitude")) : undefined,
-      longitude: formData.get("longitude") ? Number(formData.get("longitude")) : undefined,
+      protocoloPrefeitura:
+        (formData.get("protocoloPrefeitura") as string) || undefined,
+      latitude: formData.get("latitude")
+        ? Number(formData.get("latitude"))
+        : undefined,
+      longitude: formData.get("longitude")
+        ? Number(formData.get("longitude"))
+        : undefined,
     };
 
-    // 2. Validação Zod no Servidor
     const validated = chamadoSchema.safeParse(rawData);
     if (!validated.success) {
       return {
@@ -45,14 +66,15 @@ export async function criarChamadoAcolhimento(
     }
 
     const payload = validated.data;
-
-    // 3. Sanitização e Padronização do WhatsApp para E.164
-    let wppFormatado = payload.whatsapp.replace(/\D/g, "");
-    if (!wppFormatado.startsWith("55") && (wppFormatado.length === 10 || wppFormatado.length === 11)) {
-      wppFormatado = `55${wppFormatado}`;
+    const wppFormatado = sanitizarWhatsappE164(payload.whatsapp);
+    if (wppFormatado.replace(/^55/, "").length < 10) {
+      return {
+        success: false,
+        error: "WhatsApp inválido. Informe DDD e número completo.",
+      };
     }
 
-    // 4. Processamento de Upload das Fotos para o Cloudflare R2
+    // Upload opcional das fotos da ocorrência para o Cloudflare R2
     const fotosFiles = formData.getAll("fotos") as File[];
     const fotosUrls: string[] = [];
     const fotosKeys: string[] = [];
@@ -70,12 +92,8 @@ export async function criarChamadoAcolhimento(
       }
     }
 
-    // 5. Geração de Protocolo Único (ex: "RES-2026-4821")
-    const anoAtual = new Date().getFullYear();
-    const codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
-    const protocolo = `RES-${anoAtual}-${codigoAleatorio}`;
+    const protocolo = await gerarProtocoloUnicoChamado();
 
-    // 6. Gravação da Ocorrência no Banco PostgreSQL na VPS
     await prisma.chamadoAcolhimento.create({
       data: {
         protocolo,
@@ -90,6 +108,7 @@ export async function criarChamadoAcolhimento(
         pontoReferencia: payload.pontoReferencia || null,
         bairro: payload.bairro,
         cidade: payload.cidade,
+        protocoloPrefeitura: payload.protocoloPrefeitura || null,
         latitude: payload.latitude ? payload.latitude : null,
         longitude: payload.longitude ? payload.longitude : null,
         fotosOcorrenciaUrls: fotosUrls,
@@ -97,22 +116,9 @@ export async function criarChamadoAcolhimento(
       },
     });
 
-    // 7. Notificação Assíncrona no n8n (WhatsApp com Protocolo)
-    notificarNovoChamado({
-      protocolo,
-      nomeSolicitante: payload.nomeSolicitante,
-      whatsapp: wppFormatado,
-      especie: payload.especie,
-      nivelUrgencia: payload.nivelUrgencia,
-      bairro: payload.bairro,
-      cidade: payload.cidade,
-    }).catch((err) => {
-      console.error("[N8N_NOTIFICACAO_CHAMADO_ERRO]", err);
-    });
-
-    // 8. Revalidações de Cache
     revalidatePath("/chamados");
     revalidatePath("/dashboard/chamados");
+    revalidatePath("/dashboard");
 
     return {
       success: true,
@@ -128,28 +134,36 @@ export async function criarChamadoAcolhimento(
 }
 
 /**
- * Server Action protegida para voluntários/admins atualizarem
- * o andamento de um chamado de acolhimento (Defesa em Profundidade).
+ * Server Action protegida para atualizar o andamento de um chamado e gerar link wa.me direto.
  */
 export async function atualizarStatusChamado(params: {
   chamadoId: string;
   status: StatusAcolhimento;
   parecerONG?: string;
-}): Promise<{ success: boolean; error?: string }> {
+}): Promise<{ success: boolean; whatsappUrl?: string; error?: string }> {
   try {
     const user = await requireAuth();
 
-    await prisma.chamadoAcolhimento.update({
+    const atualizado = await prisma.chamadoAcolhimento.update({
       where: { id: params.chamadoId },
       data: {
         status: params.status,
-        parecerONG: params.parecerONG || undefined,
+        parecerONG: params.parecerONG?.trim() || null,
         atendidoPorId: user.id,
       },
     });
 
+    const whatsappUrl = gerarLinkWhatsappChamado(atualizado.whatsapp, {
+      nomeSolicitante: atualizado.nomeSolicitante,
+      protocolo: atualizado.protocolo,
+      cidade: atualizado.cidade,
+      status: atualizado.status,
+      parecerONG: atualizado.parecerONG,
+    });
+
     revalidatePath("/dashboard/chamados");
-    return { success: true };
+    revalidatePath("/dashboard");
+    return { success: true, whatsappUrl };
   } catch (error) {
     console.error("[ERRO_ATUALIZAR_STATUS_CHAMADO]", error);
     return {

@@ -30,6 +30,11 @@ export const chamadoSchema = z.object({
   pontoReferencia: z.string().max(255, "Ponto de referência muito longo").optional(),
   bairro: z.string().min(2, "Informe o bairro").max(100, "Bairro muito longo"),
   cidade: z.string().min(2, "Informe a cidade").max(100, "Cidade muito longa"),
+  protocoloPrefeitura: z
+    .string()
+    .trim()
+    .max(80, "Protocolo da prefeitura muito longo")
+    .optional(),
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),
 });

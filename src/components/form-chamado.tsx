@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { criarChamadoAcolhimento } from "@/actions/chamado";
 import { Especie, NivelUrgencia } from "@prisma/client";
+import { MUNICIPIOS_SUGERIDOS } from "@/lib/utils";
 import {
   AlertTriangle,
   Camera,
   CheckCircle2,
+  Copy,
   Heart,
   Loader2,
   MapPin,
@@ -33,6 +35,7 @@ export function FormChamado() {
   const [pontoReferencia, setPontoReferencia] = useState("");
   const [bairro, setBairro] = useState("");
   const [cidade, setCidade] = useState("Vitória");
+  const [protocoloPrefeitura, setProtocoloPrefeitura] = useState("");
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [obtendoLocalizacao, setObtendoLocalizacao] = useState(false);
@@ -45,6 +48,37 @@ export function FormChamado() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [protocoloSucesso, setProtocoloSucesso] = useState<string | null>(null);
+  const [copiado, setCopiado] = useState(false);
+
+  const handleCopiarProtocolo = async () => {
+    if (!protocoloSucesso) return;
+    try {
+      await navigator.clipboard.writeText(protocoloSucesso);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2500);
+    } catch {
+      // Clipboard pode falhar em contextos sem permissão
+    }
+  };
+
+  const resetarFormulario = () => {
+    previews.forEach((url) => URL.revokeObjectURL(url));
+    setProtocoloSucesso(null);
+    setCopiado(false);
+    setError(null);
+    setEspecie(Especie.CACHORRO);
+    setNivelUrgencia(NivelUrgencia.MEDIA);
+    setDescricaoSituacao("");
+    setEnderecoOcorrencia("");
+    setPontoReferencia("");
+    setBairro("");
+    setCidade("Vitória");
+    setProtocoloPrefeitura("");
+    setLatitude(null);
+    setLongitude(null);
+    setFotos([]);
+    setPreviews([]);
+  };
 
   // Captura de GPS pelo Navegador
   function obterGeolocalizacao() {
@@ -118,6 +152,9 @@ export function FormChamado() {
       if (pontoReferencia) formData.append("pontoReferencia", pontoReferencia);
       formData.append("bairro", bairro);
       formData.append("cidade", cidade);
+      if (protocoloPrefeitura.trim()) {
+        formData.append("protocoloPrefeitura", protocoloPrefeitura.trim());
+      }
       if (latitude) formData.append("latitude", String(latitude));
       if (longitude) formData.append("longitude", String(longitude));
 
@@ -144,8 +181,11 @@ export function FormChamado() {
 
   // Tela de Sucesso
   if (protocoloSucesso) {
+    const protocoloPrefTexto = protocoloPrefeitura.trim()
+      ? ` (Protocolo Prefeitura: ${protocoloPrefeitura.trim()})`
+      : "";
     const wppMsg = encodeURIComponent(
-      `Olá! Registrei o chamado de resgate com protocolo ${protocoloSucesso} na Esperança Animal.`
+      `Olá! Registrei o chamado de resgate com protocolo ${protocoloSucesso}${protocoloPrefTexto} na Esperança Animal.`
     );
 
     return (
@@ -156,40 +196,64 @@ export function FormChamado() {
 
         <div>
           <span className="text-xs uppercase font-bold text-emerald-700 tracking-wider">
-            Chamado Registrado com Sucesso
+            Chamado Registrado no Sistema
           </span>
           <h2 className="text-2xl md:text-3xl font-black text-neutral-900 mt-1">
-            Nossa equipe foi notificada!
+            Registro recebido com sucesso!
           </h2>
           <p className="text-sm text-neutral-600 mt-2 max-w-lg mx-auto">
-            Seu relato foi inserido na fila de triagem de acolhimento. Um protocolo foi
-            enviado para o seu WhatsApp com as orientações iniciais.
+            Os dados do animal e a localização já estão disponíveis no painel da equipe.
+            Guarde o código de protocolo abaixo ou fale diretamente com nosso WhatsApp caso o animal precise de atenção imediata.
           </p>
         </div>
 
-        <div className="p-5 bg-neutral-50 rounded-2xl border border-dashed border-neutral-300 max-w-md mx-auto">
+        <div className="p-5 bg-neutral-50 rounded-2xl border border-dashed border-neutral-300 max-w-md mx-auto space-y-2.5">
           <span className="text-xs text-neutral-500 font-semibold uppercase tracking-wider block">
-            Número de Protocolo
+            Número de Protocolo Esperança Animal
           </span>
-          <span className="text-2xl font-mono font-black text-emerald-800 tracking-wider block mt-1">
+          <span className="text-2xl font-mono font-black text-emerald-800 tracking-wider block">
             {protocoloSucesso}
           </span>
+          <button
+            type="button"
+            onClick={handleCopiarProtocolo}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-neutral-200 hover:bg-neutral-100 text-xs font-semibold text-neutral-700 transition cursor-pointer"
+          >
+            <Copy className="w-3.5 h-3.5" />
+            <span>{copiado ? "Protocolo copiado!" : "Copiar protocolo"}</span>
+          </button>
+          {protocoloPrefeitura.trim() && (
+            <p className="text-xs text-neutral-600 pt-1">
+              Protocolo da Prefeitura informado:{" "}
+              <strong className="font-mono text-neutral-900">
+                {protocoloPrefeitura.trim()}
+              </strong>
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <a
-            href={`https://wa.me/5527999990001?text=${wppMsg}`}
+            href={`https://wa.me/5527992814152?text=${wppMsg}`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition"
           >
             <PhoneCall className="w-4 h-4" />
-            <span>Falar com o Plantão no WhatsApp</span>
+            <span>Enviar no WhatsApp da ONG</span>
           </a>
+
+          <button
+            type="button"
+            onClick={resetarFormulario}
+            className="px-6 py-3.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-semibold text-sm rounded-xl transition cursor-pointer"
+          >
+            Registrar Outro Chamado
+          </button>
 
           <Link
             href="/"
-            className="px-6 py-3.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-semibold text-sm rounded-xl transition"
+            className="px-6 py-3.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 font-semibold text-sm rounded-xl transition"
           >
             Voltar ao Início
           </Link>
@@ -200,6 +264,7 @@ export function FormChamado() {
 
   return (
     <form
+      id="formulario-resgate"
       onSubmit={handleSubmit}
       className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-neutral-200/80 space-y-8"
     >
@@ -283,7 +348,7 @@ export function FormChamado() {
           <select
             value={especie}
             onChange={(e) => setEspecie(e.target.value as Especie)}
-            className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+            className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
           >
             <option value={Especie.CACHORRO}>🐶 Cachorro</option>
             <option value={Especie.GATO}>🐱 Gato</option>
@@ -301,7 +366,7 @@ export function FormChamado() {
             value={descricaoSituacao}
             onChange={(e) => setDescricaoSituacao(e.target.value)}
             placeholder="Ex: Cãozinho ferido na pata traseira, assustado mas manso, abrigado debaixo de um ponto de ônibus..."
-            className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+            className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
           />
         </div>
       </div>
@@ -346,7 +411,7 @@ export function FormChamado() {
               value={enderecoOcorrencia}
               onChange={(e) => setEnderecoOcorrencia(e.target.value)}
               placeholder="Ex: Av. Dante Michelini, próximo ao quiosque 5"
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
           </div>
 
@@ -359,7 +424,7 @@ export function FormChamado() {
               value={pontoReferencia}
               onChange={(e) => setPontoReferencia(e.target.value)}
               placeholder="Ex: Em frente à farmácia ou praça"
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
           </div>
 
@@ -373,22 +438,45 @@ export function FormChamado() {
               value={bairro}
               onChange={(e) => setBairro(e.target.value)}
               placeholder="Ex: Jardim da Penha"
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
-              Cidade *
+              Município / Cidade *
             </label>
             <input
               type="text"
               required
+              list="municipios-resgate"
               value={cidade}
               onChange={(e) => setCidade(e.target.value)}
               placeholder="Ex: Vitória, Vila Velha, Serra..."
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
+            <datalist id="municipios-resgate">
+              {MUNICIPIOS_SUGERIDOS.map((mun) => (
+                <option key={mun} value={mun} />
+              ))}
+            </datalist>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+              Número do Protocolo da Prefeitura (opcional)
+            </label>
+            <input
+              type="text"
+              maxLength={80}
+              value={protocoloPrefeitura}
+              onChange={(e) => setProtocoloPrefeitura(e.target.value)}
+              placeholder="Ex: Protocolo do 156 (Vitória), 162 (Vila Velha/Cariacica) ou Colab/Semma (Serra)"
+              className="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+            />
+            <p className="text-[11px] text-neutral-500 mt-1">
+              Se você já acionou o canal oficial da prefeitura acima, informe o número do protocolo para ajudar no acompanhamento em conjunto.
+            </p>
           </div>
         </div>
       </div>
@@ -464,7 +552,7 @@ export function FormChamado() {
               value={nomeSolicitante}
               onChange={(e) => setNomeSolicitante(e.target.value)}
               placeholder="Ex: Maria Silva"
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
           </div>
 
@@ -478,10 +566,10 @@ export function FormChamado() {
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
               placeholder="Ex: (27) 99999-8888"
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
-            <p className="text-[11px] text-neutral-400 mt-1">
-              Enviaremos o comprovante e protocolo oficial para este WhatsApp.
+            <p className="text-[11px] text-neutral-500 mt-1">
+              Nossa equipe utilizará este número para entrar em contato via WhatsApp caso precise confirmar detalhes.
             </p>
           </div>
         </div>
