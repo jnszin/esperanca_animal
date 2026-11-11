@@ -10,24 +10,83 @@ import {
   PhoneCall,
   Sparkles,
   ArrowRight,
+  Newspaper,
+  BarChart3,
+  Calendar,
+  Clock,
 } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
+function formatarIdadeHero(meses: number): string {
+  if (meses < 12) {
+    return meses === 1 ? "1 mês" : `${meses} meses`;
+  }
+  const anos = Math.floor(meses / 12);
+  const resto = meses % 12;
+  const textoAno = anos === 1 ? "1 ano" : `${anos} anos`;
+  if (resto === 0) return textoAno;
+  return `${textoAno} e ${resto} ${resto === 1 ? "mês" : "meses"}`;
+}
+
+function formatarPorteHero(porte: string): string {
+  if (porte === "PEQUENO") return "Porte Pequeno";
+  if (porte === "MEDIO") return "Porte Médio";
+  return "Porte Grande";
+}
+
 export default async function HomePage() {
-  // Busca os animais disponíveis para a esteira na Home
-  const animaisDisponiveis = await prisma.animal.findMany({
-    where: {
-      status: "DISPONIVEL",
-      ativo: true,
-    },
-    include: {
-      fotos: {
-        orderBy: [{ principal: "desc" }, { ordem: "asc" }],
-        take: 1,
+  const [animaisDisponiveis, animaisStats, noticiasRecentes] = await Promise.all([
+    prisma.animal.findMany({
+      where: {
+        status: "DISPONIVEL",
+        ativo: true,
       },
-    },
-    take: 12,
-    orderBy: [{ destaqueVitrine: "desc" }, { createdAt: "desc" }],
-  });
+      include: {
+        fotos: {
+          orderBy: [{ principal: "desc" }, { ordem: "asc" }],
+          take: 1,
+        },
+      },
+      take: 12,
+      orderBy: [{ destaqueVitrine: "desc" }, { createdAt: "desc" }],
+    }),
+    prisma.animal.findMany({
+      where: {
+        OR: [{ ativo: true }, { status: "ADOTADO" }],
+      },
+      select: {
+        status: true,
+        vacinado: true,
+      },
+    }),
+    prisma.noticia.findMany({
+      where: { publicado: true },
+      orderBy: { createdAt: "desc" },
+      take: 2,
+      select: {
+        id: true,
+        titulo: true,
+        slug: true,
+        subtitulo: true,
+        imagemCapaUrl: true,
+        categoria: true,
+        tempoLeituraMin: true,
+        createdAt: true,
+      },
+    }),
+  ]);
+
+  const totalVidasAcolhidas = animaisStats.length;
+  const totalAdotados = animaisStats.filter((a) => a.status === "ADOTADO").length;
+  const totalVacinados = animaisStats.filter((a) => a.vacinado).length;
+  const pctVacinados =
+    totalVidasAcolhidas > 0
+      ? Math.round((totalVacinados / totalVidasAcolhidas) * 100)
+      : 0;
+
+  const petDestaque = animaisDisponiveis[0];
+  const fotoDestaqueUrl = petDestaque?.fotos[0]?.url;
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50 text-neutral-900">
@@ -79,19 +138,41 @@ export default async function HomePage() {
                 </div>
 
                 {/* Métricas de Impacto */}
-                <div className="grid grid-cols-3 gap-4 pt-8 border-t border-neutral-200/60 max-w-lg">
-                  <div>
-                    <span className="block text-2xl font-black text-neutral-900">+350</span>
-                    <span className="text-xs text-neutral-500 font-medium">Vidas Salvas</span>
+                <div className="space-y-3 pt-8 border-t border-neutral-200/60 max-w-lg">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <span className="block text-2xl font-black text-neutral-900">
+                        {totalVidasAcolhidas}
+                      </span>
+                      <span className="text-xs text-neutral-500 font-medium">
+                        Vidas Acolhidas
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-2xl font-black text-emerald-600">
+                        {totalAdotados}
+                      </span>
+                      <span className="text-xs text-neutral-500 font-medium">
+                        Finais Felizes
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-2xl font-black text-neutral-900">
+                        {pctVacinados}%
+                      </span>
+                      <span className="text-xs text-neutral-500 font-medium">
+                        Vacinados em Dia
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="block text-2xl font-black text-emerald-600">100%</span>
-                    <span className="text-xs text-neutral-500 font-medium">Castrados & Vacinados</span>
-                  </div>
-                  <div>
-                    <span className="block text-2xl font-black text-neutral-900">0%</span>
-                    <span className="text-xs text-neutral-500 font-medium">Eutanásia</span>
-                  </div>
+                  <Link
+                    href="/transparencia"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition"
+                  >
+                    <BarChart3 className="w-3.5 h-3.5" />
+                    <span>Ver indicadores em tempo real na Transparência</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
               </div>
 
@@ -99,28 +180,61 @@ export default async function HomePage() {
               <div className="lg:col-span-5 relative">
                 <div className="relative mx-auto w-full max-w-md bg-white rounded-3xl shadow-2xl border border-neutral-200/80 overflow-hidden p-3 rotate-1 hover:rotate-0 transition duration-300">
                   <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-neutral-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800"
-                      alt="Cão caramelo para adoção"
-                      className="w-full h-full object-cover"
-                    />
+                    {fotoDestaqueUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={fotoDestaqueUrl}
+                        alt={petDestaque?.nome || "Pet disponível para adoção"}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-300">
+                        <PawPrint className="w-16 h-16" />
+                      </div>
+                    )}
                     <div className="absolute top-3 left-3 bg-emerald-600/90 backdrop-blur-xs text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                      Destaque do Dia
+                      {petDestaque ? "Destaque do Dia" : "Adoção Responsável"}
                     </div>
                   </div>
                   <div className="p-5">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-xl font-bold text-neutral-900">Thor, 1 ano e meio</h3>
-                        <p className="text-xs text-neutral-500">Porte Médio • Caramelo Dócil</p>
-                      </div>
-                      <Link
-                        href="/animais"
-                        className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition"
-                      >
-                        <ArrowRight className="w-5 h-5" />
-                      </Link>
+                    <div className="flex items-center justify-between gap-3">
+                      {petDestaque ? (
+                        <>
+                          <div>
+                            <h3 className="text-xl font-bold text-neutral-900">
+                              {petDestaque.nome}, {formatarIdadeHero(petDestaque.idadeEstimadaMeses)}
+                            </h3>
+                            <p className="text-xs text-neutral-500">
+                              {formatarPorteHero(petDestaque.porte)} • {petDestaque.raca}
+                            </p>
+                          </div>
+                          <Link
+                            href={`/animais/${petDestaque.slug}`}
+                            aria-label={`Conhecer ${petDestaque.nome}`}
+                            className="w-10 h-10 shrink-0 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition"
+                          >
+                            <ArrowRight className="w-5 h-5" />
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <h3 className="text-lg font-bold text-neutral-900">
+                              Vitrine Esperança Animal
+                            </h3>
+                            <p className="text-xs text-neutral-500">
+                              Acompanhe novos resgates e histórias reais
+                            </p>
+                          </div>
+                          <Link
+                            href="/animais"
+                            aria-label="Abrir vitrine de adoção"
+                            className="w-10 h-10 shrink-0 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition"
+                          >
+                            <ArrowRight className="w-5 h-5" />
+                          </Link>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -211,6 +325,112 @@ export default async function HomePage() {
                 </p>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* ========================================================
+            3.5. ÚLTIMAS DO NOSSO BLOG & TRANSPARÊNCIA
+        ======================================================== */}
+        <section className="py-16 bg-neutral-50 border-t border-neutral-200/70">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="space-y-1">
+                <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">
+                  Diário Esperança Animal
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 tracking-tight">
+                  Projetos Realizados &amp; Histórias de Resgate
+                </h2>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  href="/noticias"
+                  className="text-xs font-bold text-amber-700 hover:text-amber-800 inline-flex items-center gap-1.5"
+                >
+                  <Newspaper className="w-4 h-4" />
+                  <span>Ver todo o Blog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <Link
+                  href="/transparencia"
+                  className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold inline-flex items-center gap-1.5 transition"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  <span>Portal de Transparência</span>
+                </Link>
+              </div>
+            </div>
+
+            {noticiasRecentes.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {noticiasRecentes.map((post) => (
+                  <Link
+                    key={post.id}
+                    href={`/noticias/${post.slug}`}
+                    className="bg-white rounded-3xl border border-neutral-200/80 overflow-hidden shadow-xs hover:shadow-md transition group grid grid-cols-1 sm:grid-cols-5"
+                  >
+                    <div className="sm:col-span-2 aspect-16/10 sm:aspect-auto bg-neutral-100 overflow-hidden">
+                      {post.imagemCapaUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={post.imagemCapaUrl}
+                          alt={post.titulo}
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full min-h-36 flex items-center justify-center text-neutral-300">
+                          <Newspaper className="w-8 h-8" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="sm:col-span-3 p-6 flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[11px] font-bold">
+                          {post.categoria}
+                        </span>
+                        <h3 className="text-lg font-extrabold text-neutral-900 group-hover:text-emerald-700 transition line-clamp-2">
+                          {post.titulo}
+                        </h3>
+                        {post.subtitulo && (
+                          <p className="text-xs text-neutral-600 line-clamp-2 leading-relaxed">
+                            {post.subtitulo}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4 text-[11px] text-neutral-400 font-medium pt-1">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {new Date(post.createdAt).toLocaleDateString("pt-BR")}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          {post.tempoLeituraMin} min de leitura
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl border border-dashed border-neutral-200 p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="space-y-1 text-center sm:text-left">
+                  <h3 className="text-base font-bold text-neutral-900">
+                    Novas histórias e prestações de impacto em breve no nosso Blog
+                  </h3>
+                  <p className="text-xs text-neutral-500">
+                    Enquanto preparamos as próximas publicações, acompanhe os números em
+                    tempo real no Portal de Transparência.
+                  </p>
+                </div>
+                <Link
+                  href="/transparencia"
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shrink-0 transition"
+                >
+                  Acessar Transparência
+                </Link>
+              </div>
+            )}
           </div>
         </section>
 

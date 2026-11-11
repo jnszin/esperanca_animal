@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   PawPrint,
   LogOut,
-  Users,
+  BarChart3,
   HeartHandshake,
   ShieldAlert,
   CheckCircle2,
@@ -74,15 +74,14 @@ export default async function DashboardPage() {
               <span>Ver Site Público</span>
             </Link>
 
-            {user.cargo === "ADMIN" && (
-              <Link
-                href="/dashboard/usuarios"
-                className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition"
-              >
-                <Users className="w-4 h-4" />
-                <span>Gestão de Voluntários</span>
-              </Link>
-            )}
+            <Link
+              href="/transparencia"
+              target="_blank"
+              className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition"
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>Portal de Transparência</span>
+            </Link>
 
             <form action={logoutAction}>
               <button
@@ -309,9 +308,9 @@ export default async function DashboardPage() {
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-neutral-900">Segurança RBAC</h3>
+              <h3 className="text-sm font-semibold text-neutral-900">Acesso Administrativo Único</h3>
               <p className="text-xs text-neutral-500 mt-1">
-                Segregação estrita de privilégios entre VOLUNTARIO e ADMIN.
+                Sessão única criptografada e proteção estrita para a administração da ONG.
               </p>
             </div>
           </div>

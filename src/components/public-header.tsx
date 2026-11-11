@@ -1,12 +1,20 @@
 import Link from "next/link";
-import { PawPrint, Heart, PhoneCall, LogIn, Newspaper } from "lucide-react";
+import {
+  PawPrint,
+  Heart,
+  PhoneCall,
+  LogIn,
+  Newspaper,
+  BarChart3,
+} from "lucide-react";
+import { MobileNav } from "@/components/mobile-nav";
 
 export function PublicHeader() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
           <div className="w-11 h-11 bg-emerald-600 group-hover:bg-emerald-700 text-white rounded-2xl flex items-center justify-center shadow-md shadow-emerald-600/20 transition">
             <PawPrint className="w-6 h-6" />
           </div>
@@ -21,52 +29,60 @@ export function PublicHeader() {
         </Link>
 
         {/* Links Principais */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center md:gap-4 lg:gap-6">
           <Link
             href="/"
-            className="text-sm font-medium text-neutral-600 hover:text-emerald-700 transition"
+            className="text-sm font-medium text-neutral-600 hover:text-emerald-700 transition whitespace-nowrap"
           >
             Início
           </Link>
           <Link
             href="/animais"
-            className="text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition flex items-center gap-1.5"
+            className="text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition flex items-center gap-1.5 whitespace-nowrap"
           >
-            <PawPrint className="w-4 h-4" />
+            <PawPrint className="w-4 h-4 shrink-0" />
             <span>Quero Adotar</span>
           </Link>
           <Link
             href="/chamados"
-            className="text-sm font-medium text-neutral-600 hover:text-red-600 transition flex items-center gap-1.5"
+            className="text-sm font-medium text-neutral-600 hover:text-red-600 transition flex items-center gap-1.5 whitespace-nowrap"
           >
-            <PhoneCall className="w-4 h-4 text-red-500" />
+            <PhoneCall className="w-4 h-4 text-red-500 shrink-0" />
             <span>Pedir Resgate</span>
           </Link>
           <Link
-            href="/doacoes"
-            className="text-sm font-medium text-neutral-600 hover:text-amber-600 transition flex items-center gap-1.5"
+            href="/noticias"
+            className="text-sm font-medium text-neutral-600 hover:text-amber-800 transition flex items-center gap-1.5 whitespace-nowrap"
           >
-            <Heart className="w-4 h-4 text-amber-500" />
-            <span>Doar Pix</span>
+            <Newspaper className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>Blog & Notícias</span>
           </Link>
           <Link
-            href="/noticias"
-            className="text-sm font-medium text-neutral-600 hover:text-amber-800 transition flex items-center gap-1.5"
+            href="/transparencia"
+            className="text-sm font-medium text-neutral-600 hover:text-emerald-700 transition flex items-center gap-1.5 whitespace-nowrap"
           >
-            <Newspaper className="w-4 h-4 text-amber-600" />
-            <span>Blog & Notícias</span>
+            <BarChart3 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Transparência</span>
+          </Link>
+          <Link
+            href="/doacoes"
+            className="text-sm font-medium text-neutral-600 hover:text-amber-600 transition flex items-center gap-1.5 whitespace-nowrap"
+          >
+            <Heart className="w-4 h-4 text-amber-500 shrink-0" />
+            <span>Doar Pix</span>
           </Link>
         </nav>
 
-        {/* Acesso Voluntário */}
-        <div className="flex items-center gap-3">
+        {/* Acesso Admin & Menu Mobile */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-700 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200/80 transition"
+            className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-700 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200/80 transition whitespace-nowrap"
           >
             <LogIn className="w-4 h-4" />
             <span>Área da ONG</span>
           </Link>
+          <MobileNav />
         </div>
       </div>
     </header>

@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { noticiaSchema } from "@/schemas/noticia";
-import { uploadImageToR2 } from "@/lib/storage";
+import { uploadImageToR2, deleteImageFromR2 } from "@/lib/storage";
 import { requireAuth } from "@/lib/auth-checks";
 import { revalidatePath } from "next/cache";
 
@@ -139,6 +139,15 @@ export async function editarNoticia(formData: FormData): Promise<NoticiaActionRe
 
     const payload = validated.data;
 
+    const noticiaAnterior = await prisma.noticia.findUnique({
+      where: { id },
+      select: { imagemCapaKey: true },
+    });
+
+    if (!noticiaAnterior) {
+      return { success: false, error: "Matéria não encontrada." };
+    }
+
     // Nova capa opcional
     const capaFile = formData.get("novaImagemCapa") as File | null;
     let novaCapaUrl: string | undefined = undefined;
@@ -169,9 +178,18 @@ export async function editarNoticia(formData: FormData): Promise<NoticiaActionRe
       },
     });
 
+    if (
+      novaCapaKey &&
+      noticiaAnterior.imagemCapaKey &&
+      noticiaAnterior.imagemCapaKey !== novaCapaKey
+    ) {
+      await deleteImageFromR2(noticiaAnterior.imagemCapaKey);
+    }
+
     revalidatePath("/noticias");
     revalidatePath(`/noticias/${noticiaAtualizada.slug}`);
     revalidatePath("/dashboard/noticias");
+    revalidatePath("/transparencia");
     revalidatePath("/");
 
     return { success: true, slug: noticiaAtualizada.slug };
@@ -190,12 +208,26 @@ export async function excluirNoticia(params: {
   try {
     await requireAuth();
 
+    const noticia = await prisma.noticia.findUnique({
+      where: { id: params.id },
+      select: { id: true, imagemCapaKey: true },
+    });
+
+    if (!noticia) {
+      return { success: false, error: "Matéria não encontrada." };
+    }
+
     await prisma.noticia.delete({
       where: { id: params.id },
     });
 
+    if (noticia.imagemCapaKey) {
+      await deleteImageFromR2(noticia.imagemCapaKey);
+    }
+
     revalidatePath("/noticias");
     revalidatePath("/dashboard/noticias");
+    revalidatePath("/transparencia");
     revalidatePath("/");
 
     return { success: true };

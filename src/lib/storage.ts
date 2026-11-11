@@ -87,6 +87,16 @@ export async function uploadImageToR2(
  * Remove um arquivo do Cloudflare R2 através da sua keyStorage.
  */
 export async function deleteImageFromR2(keyStorage: string): Promise<boolean> {
+  if (
+    !keyStorage ||
+    keyStorage.startsWith("dev-mock/") ||
+    keyStorage.startsWith("default/") ||
+    !process.env.R2_ACCESS_KEY_ID ||
+    !process.env.R2_SECRET_ACCESS_KEY
+  ) {
+    return true;
+  }
+
   const bucketName = process.env.R2_BUCKET_NAME || "esperanca-animal";
 
   try {

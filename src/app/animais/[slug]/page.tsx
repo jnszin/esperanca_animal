@@ -230,18 +230,55 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
 
                 {/* Botão de Ação para o Formulário de Adoção */}
                 <div className="pt-4 border-t border-neutral-100 space-y-3">
-                  <Link
-                    href={`/animais/${animal.slug}/adotar`}
-                    className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 text-sm transition active:scale-[0.98]"
-                  >
-                    <Heart className="w-5 h-5 fill-white" />
-                    <span>Iniciar Formulário de Adoção</span>
-                  </Link>
+                  {animal.status === "DISPONIVEL" ? (
+                    <>
+                      <Link
+                        href={`/animais/${animal.slug}/adotar`}
+                        className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 text-sm transition active:scale-[0.98]"
+                      >
+                        <Heart className="w-5 h-5 fill-white" />
+                        <span>Iniciar Formulário de Adoção</span>
+                      </Link>
 
-                  <p className="text-[11px] text-neutral-400 text-center leading-relaxed">
-                    Você responderá a um questionário rápido de 3 etapas. A triagem
-                    calcula a compatibilidade na hora e gera seu protocolo.
-                  </p>
+                      <p className="text-[11px] text-neutral-400 text-center leading-relaxed">
+                        Você responderá a um questionário rápido de 3 etapas. A triagem
+                        calcula a compatibilidade na hora e gera seu protocolo.
+                      </p>
+                    </>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 space-y-1.5">
+                        <p className="text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5">
+                          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                          <span>
+                            {animal.status === "ADOTADO"
+                              ? "Final Feliz Alcançado!"
+                              : animal.status === "EM_PROCESSO"
+                                ? "Em Processo de Adoção"
+                                : animal.status === "EM_TRATAMENTO"
+                                  ? "Em Recuperação Veterinária"
+                                  : "Indisponível para Adoção"}
+                          </span>
+                        </p>
+                        <p className="text-xs text-amber-800 leading-relaxed">
+                          {animal.status === "ADOTADO"
+                            ? `${animal.nome} já foi adotado e está feliz com sua nova família.`
+                            : animal.status === "EM_PROCESSO"
+                              ? `${animal.nome} já está em fase avançada de avaliação com uma família candidata.`
+                              : animal.status === "EM_TRATAMENTO"
+                                ? `${animal.nome} está recebendo cuidados veterinários no momento e voltará à vitrine em breve.`
+                                : `${animal.nome} não está aceitando novas solicitações de adoção no momento.`}
+                        </p>
+                      </div>
+
+                      <Link
+                        href="/animais"
+                        className="w-full py-3.5 bg-neutral-900 hover:bg-neutral-800 text-white font-bold rounded-2xl flex items-center justify-center gap-2 text-sm transition"
+                      >
+                        <span>Conhecer Outros Pets Disponíveis</span>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

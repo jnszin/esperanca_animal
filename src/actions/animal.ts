@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { animalSchema } from "@/schemas/animal";
-import { uploadImageToR2 } from "@/lib/storage";
+import { uploadImageToR2, deleteImageFromR2 } from "@/lib/storage";
 import { requireAuth } from "@/lib/auth-checks";
 import { revalidatePath } from "next/cache";
 import { Especie, Porte, Sexo, StatusAnimal, StatusAcolhimento } from "@prisma/client";
@@ -420,13 +420,26 @@ export async function excluirFotoAnimal(params: {
   try {
     await requireAuth();
 
+    const foto = await prisma.fotoAnimal.findUnique({
+      where: { id: params.fotoId },
+      select: { id: true, keyStorage: true },
+    });
+
+    if (!foto) {
+      return { success: false, error: "Foto não encontrada." };
+    }
+
     await prisma.fotoAnimal.delete({
       where: { id: params.fotoId },
     });
 
+    await deleteImageFromR2(foto.keyStorage);
+
     revalidatePath(`/dashboard/animais/${params.animalId}/editar`);
     revalidatePath("/animais");
     revalidatePath("/dashboard/animais");
+    revalidatePath("/transparencia");
+    revalidatePath("/");
 
     return { success: true };
   } catch (error) {
