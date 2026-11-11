@@ -40,6 +40,12 @@ export default async function DashboardPage() {
     where: { status: "NOVO" },
   });
 
+  const voluntariosNovos = await prisma.voluntarioInscricao.count({
+    where: { status: "NOVO" },
+  });
+
+  const totalAjudaNovos = ajudasNovas + voluntariosNovos;
+
   return (
     <div className="min-h-screen bg-neutral-100/60 p-6 md:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -315,7 +321,7 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            {/* Card: Ofertas de Ajuda & Insumos */}
+            {/* Card: Ajude, Insumos & Voluntários */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-200/80 flex flex-col justify-between hover:shadow-md transition group">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -324,21 +330,22 @@ export default async function DashboardPage() {
                   </div>
                   <span
                     className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      ajudasNovas > 0
+                      totalAjudaNovos > 0
                         ? "bg-rose-100 text-rose-800"
                         : "bg-neutral-100 text-neutral-600"
                     }`}
                   >
-                    {ajudasNovas} {ajudasNovas === 1 ? "nova" : "novas"}
+                    {totalAjudaNovos}{" "}
+                    {totalAjudaNovos === 1 ? "pendente" : "pendentes"}
                   </span>
                 </div>
 
                 <div>
                   <h3 className="text-base font-bold text-neutral-900 group-hover:text-rose-700 transition">
-                    Ofertas de Ajuda &amp; Insumos
+                    Ajude, Insumos &amp; Voluntários
                   </h3>
                   <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
-                    Recebimento de doações de ração, shampoos, medicamentos, apoio financeiro e resposta direta no WhatsApp.
+                    Doações de ração, shampoos, apoio financeiro ({ajudasNovas} novas) e voluntários de passeios, LT e apoio ({voluntariosNovos} novos).
                   </p>
                 </div>
               </div>
@@ -348,16 +355,22 @@ export default async function DashboardPage() {
                   href="/dashboard/ajudas"
                   className="w-full py-2.5 px-4 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
                 >
-                  <span>Gerenciar Ofertas</span>
+                  <span>Gerenciar Ajudas &amp; Voluntários</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <div className="flex items-center justify-end px-1 text-[11px]">
+                <div className="flex items-center justify-between px-1 text-[11px]">
+                  <Link
+                    href="/dashboard/ajudas?aba=voluntarios"
+                    className="font-semibold text-rose-600 hover:underline"
+                  >
+                    Ver Voluntários →
+                  </Link>
                   <Link
                     href="/ajude"
                     target="_blank"
                     className="text-neutral-400 hover:text-neutral-700"
                   >
-                    Página Ajude ↗
+                    Aba Ajude ↗
                   </Link>
                 </div>
               </div>

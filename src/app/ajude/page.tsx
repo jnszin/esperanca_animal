@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
 import { PublicHeader } from "@/components/public-header";
 import { PublicFooter } from "@/components/public-footer";
-import { AjudePortal } from "@/components/ajude-portal";
+import { AjudePortal, type AbaAjudePortal } from "@/components/ajude-portal";
 import { HeartHandshake } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ajude a ONG | Doações, Ração & Insumos | Esperança Animal",
+  title: "Ajude a ONG | Doações, Insumos & Voluntários | Esperança Animal",
   description:
-    "Saiba como ajudar os animais resgatados da Esperança Animal com doações financeiras, ração, shampoos para cães e gatos, medicamentos ou apoio solidário.",
+    "Apoie a Esperança Animal com doações financeiras, ração, shampoos e medicamentos, ou cadastre-se como voluntário para passeios, lar temporário e apoio.",
 };
 
-export default function AjudePage() {
+interface AjudePageProps {
+  searchParams: Promise<{ aba?: string }>;
+}
+
+export default async function AjudePage({ searchParams }: AjudePageProps) {
+  const { aba } = await searchParams;
+  const initialAba: AbaAjudePortal =
+    aba === "voluntarios" ? "voluntarios" : "doacoes";
+
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50 text-neutral-900">
       <PublicHeader />
@@ -21,7 +29,7 @@ export default function AjudePage() {
           <div className="text-center space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-900 text-xs font-bold tracking-wide">
               <HeartHandshake className="w-3.5 h-3.5 text-amber-700" />
-              <span>Central de Solidariedade</span>
+              <span>Central de Solidariedade &amp; Voluntariado</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-neutral-950 tracking-tight">
@@ -29,13 +37,13 @@ export default function AjudePage() {
             </h1>
 
             <p className="text-base text-neutral-600 max-w-2xl mx-auto leading-relaxed">
-              Você pode apoiar financeiramente ou enviar uma mensagem personalizada
-              contando o que tem disponível para doar — como ração, shampoos para
-              cães e gatos, medicamentos ou acessórios.
+              Você pode apoiar financeiramente, oferecer ração, shampoos e
+              medicamentos, ou se cadastrar como voluntário para passeios, lar
+              temporário e ações da ONG.
             </p>
           </div>
 
-          <AjudePortal />
+          <AjudePortal initialAba={initialAba} />
         </div>
       </main>
 
@@ -43,4 +51,3 @@ export default function AjudePage() {
     </div>
   );
 }
-

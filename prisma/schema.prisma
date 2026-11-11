@@ -143,6 +143,7 @@ model User {
   noticias              Noticia[]
   solicitacoesCastracao SolicitacaoCastracao[]
   ofertasAjudaAtendidas OfertaAjuda[]
+  voluntariosAtendidos  VoluntarioInscricao[]
 
   @@map("usuarios")
 }
@@ -463,4 +464,43 @@ model OfertaAjuda {
   @@index([status, createdAt])
   @@index([tipoAjuda])
   @@map("ofertas_ajuda")
+}
+
+enum ModalidadeVoluntariado {
+  PASSEIOS
+  LAR_TEMPORARIO
+  PERSONALIZADO
+}
+
+enum StatusVoluntario {
+  NOVO
+  EM_CONTATO
+  ATIVO
+  INATIVO
+}
+
+model VoluntarioInscricao {
+  id                String                 @id @default(cuid())
+  protocolo         String                 @unique // Ex: "VOL-2026-4812"
+
+  nome              String
+  whatsapp          String
+  municipio         String
+  disponibilidade   String
+  modalidade        ModalidadeVoluntariado
+  descricao         String                 @db.Text
+  aceitouTermosLGPD Boolean                @default(true)
+
+  status            StatusVoluntario       @default(NOVO)
+  observacaoEquipe  String?                @db.Text
+  atendidoPorId     String?
+  atendidoPor       User?                  @relation(fields: [atendidoPorId], references: [id], onDelete: SetNull)
+
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  @@index([status, createdAt])
+  @@index([modalidade])
+  @@index([municipio])
+  @@map("voluntarios_inscricoes")
 }

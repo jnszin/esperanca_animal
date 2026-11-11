@@ -1,26 +1,45 @@
 import { requireAuth } from "@/lib/auth-checks";
 import { prisma } from "@/lib/prisma";
-import { ListaAjudasAdmin } from "@/components/lista-ajudas-admin";
+import {
+  PainelAjudasTabs,
+  type AbaAdminAjudas,
+} from "@/components/painel-ajudas-tabs";
 import type { OfertaAjudaAdminDTO } from "@/components/ajuda-card-admin";
+import type { VoluntarioAdminDTO } from "@/components/voluntario-card-admin";
 import Link from "next/link";
 import {
   ArrowLeft,
   CheckCircle2,
+  HandHeart,
   HeartHandshake,
-  MessageCircle,
   Sparkles,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardAjudasPage() {
+interface DashboardAjudasPageProps {
+  searchParams: Promise<{ aba?: string }>;
+}
+
+export default async function DashboardAjudasPage({
+  searchParams,
+}: DashboardAjudasPageProps) {
   await requireAuth();
 
-  const ofertas = await prisma.ofertaAjuda.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const { aba } = await searchParams;
+  const initialAba: AbaAdminAjudas =
+    aba === "voluntarios" ? "voluntarios" : "ofertas";
 
-  const items: OfertaAjudaAdminDTO[] = ofertas.map((o) => ({
+  const [ofertasRaw, voluntariosRaw] = await Promise.all([
+    prisma.ofertaAjuda.findMany({
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.voluntarioInscricao.findMany({
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  const ofertas: OfertaAjudaAdminDTO[] = ofertasRaw.map((o) => ({
     id: o.id,
     protocolo: o.protocolo,
     nomeDoador: o.nomeDoador,
@@ -35,12 +54,23 @@ export default async function DashboardAjudasPage() {
     createdAt: o.createdAt.toISOString(),
   }));
 
-  const total = items.length;
-  const novas = items.filter((i) => i.status === "NOVO").length;
-  const emContato = items.filter((i) => i.status === "EM_CONTATO").length;
-  const recebidas = items.filter(
-    (i) => i.status === "RECEBIDO_AGRADECIDO"
-  ).length;
+  const voluntarios: VoluntarioAdminDTO[] = voluntariosRaw.map((v) => ({
+    id: v.id,
+    protocolo: v.protocolo,
+    nome: v.nome,
+    whatsapp: v.whatsapp,
+    municipio: v.municipio,
+    disponibilidade: v.disponibilidade,
+    modalidade: v.modalidade,
+    descricao: v.descricao,
+    status: v.status,
+    observacaoEquipe: v.observacaoEquipe,
+    createdAt: v.createdAt.toISOString(),
+  }));
+
+  const novasOfertas = ofertas.filter((i) => i.status === "NOVO").length;
+  const novosVoluntarios = voluntarios.filter((v) => v.status === "NOVO").length;
+  const voluntariosAtivos = voluntarios.filter((v) => v.status === "ATIVO").length;
 
   return (
     <div className="min-h-screen bg-neutral-100/60 p-6 md:p-10">
@@ -54,13 +84,22 @@ export default async function DashboardAjudasPage() {
             <span>Voltar ao Dashboard</span>
           </Link>
 
-          <Link
-            href="/ajude"
-            target="_blank"
-            className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 transition"
-          >
-            Visualizar Aba Ajude Pública ↗
-          </Link>
+          <div className="flex items-center gap-4 text-xs font-semibold">
+            <Link
+              href="/ajude"
+              target="_blank"
+              className="text-emerald-700 hover:text-emerald-800 transition"
+            >
+              Aba Ajude ↗
+            </Link>
+            <Link
+              href="/ajude?aba=voluntarios"
+              target="_blank"
+              className="text-emerald-700 hover:text-emerald-800 transition"
+            >
+              Área de Voluntários ↗
+            </Link>
+          </div>
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -70,51 +109,62 @@ export default async function DashboardAjudasPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-neutral-900">
-                Ofertas de Ajuda &amp; Doações de Insumos
+                Ajude, Insumos &amp; Voluntários
               </h1>
               <p className="text-xs text-neutral-500 mt-0.5">
-                Acompanhe quem ofereceu ração, shampoos, medicamentos ou apoio
-                financeiro e responda pelo WhatsApp.
+                Gerencie ofertas de ração, itens e dinheiro, além dos cadastros de
+                voluntários para passeios, lar temporário e apoios diversos.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-            <div className="px-3 py-2 rounded-xl bg-neutral-50 border border-neutral-200">
-              <span className="block text-lg font-black text-neutral-900">{total}</span>
-              <span className="text-[11px] font-medium text-neutral-500">Total</span>
-            </div>
             <div className="px-3 py-2 rounded-xl bg-amber-50 border border-amber-200">
               <span className="flex items-center justify-center gap-1 text-lg font-black text-amber-900">
                 <Sparkles className="w-4 h-4" />
-                {novas}
+                {novasOfertas}
               </span>
-              <span className="text-[11px] font-medium text-amber-700">Novas</span>
+              <span className="text-[11px] font-medium text-amber-700">
+                Novas Ofertas
+              </span>
             </div>
             <div className="px-3 py-2 rounded-xl bg-blue-50 border border-blue-200">
               <span className="flex items-center justify-center gap-1 text-lg font-black text-blue-900">
-                <MessageCircle className="w-4 h-4" />
-                {emContato}
+                <HandHeart className="w-4 h-4" />
+                {novosVoluntarios}
               </span>
               <span className="text-[11px] font-medium text-blue-700">
-                Em Contato
+                Novos Voluntários
               </span>
             </div>
             <div className="px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200">
               <span className="flex items-center justify-center gap-1 text-lg font-black text-emerald-900">
                 <CheckCircle2 className="w-4 h-4" />
-                {recebidas}
+                {voluntariosAtivos}
               </span>
               <span className="text-[11px] font-medium text-emerald-700">
-                Recebidas
+                Volunt. Ativos
+              </span>
+            </div>
+            <div className="px-3 py-2 rounded-xl bg-neutral-50 border border-neutral-200">
+              <span className="block text-lg font-black text-neutral-900">
+                {ofertas.length + voluntarios.length}
+              </span>
+              <span className="text-[11px] font-medium text-neutral-500">
+                Total Geral
               </span>
             </div>
           </div>
         </div>
 
-        <ListaAjudasAdmin items={items} />
+        <PainelAjudasTabs
+          ofertas={ofertas}
+          voluntarios={voluntarios}
+          novasOfertas={novasOfertas}
+          novosVoluntarios={novosVoluntarios}
+          initialAba={initialAba}
+        />
       </div>
     </div>
   );
 }
-
