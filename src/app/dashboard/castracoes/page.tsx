@@ -29,6 +29,7 @@ export default async function DashboardCastracoesPage() {
     municipio: r.municipio,
     nomePet: r.nomePet,
     especie: r.especie,
+    raca: r.raca,
     sexo: r.sexo,
     pesoKg: Number(r.pesoKg),
     idadeEstimada: r.idadeEstimada,

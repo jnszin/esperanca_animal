@@ -52,6 +52,11 @@ export const castracaoSchema = z.object({
     .min(2, "Informe o nome do pet")
     .max(80, "Nome do pet muito longo"),
   especie: z.nativeEnum(Especie),
+  raca: z
+    .string()
+    .trim()
+    .min(2, "Informe a raça do pet (ou SRD / Vira-lata)")
+    .max(80, "Nome da raça muito longo"),
   sexo: z.nativeEnum(Sexo),
   pesoKg: z
     .number({ message: "Informe o peso aproximado do pet em kg" })

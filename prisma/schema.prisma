@@ -412,6 +412,7 @@ model SolicitacaoCastracao {
   // Dados do Pet & Serviço
   nomePet          String
   especie          Especie
+  raca             String?
   sexo             Sexo
   pesoKg           Decimal                  @db.Decimal(5, 2)
   idadeEstimada    String?

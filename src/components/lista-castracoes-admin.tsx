@@ -49,6 +49,7 @@ export function ListaCastracoesAdmin({
         item.protocolo.toLowerCase().includes(q) ||
         item.nomeTutor.toLowerCase().includes(q) ||
         item.nomePet.toLowerCase().includes(q) ||
+        (item.raca || "").toLowerCase().includes(q) ||
         item.bairro.toLowerCase().includes(q) ||
         item.municipio.toLowerCase().includes(q)
       );
@@ -65,7 +66,7 @@ export function ListaCastracoesAdmin({
             type="text"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="Buscar protocolo, tutor, pet..."
+            placeholder="Buscar protocolo, tutor, pet, raça..."
             className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>

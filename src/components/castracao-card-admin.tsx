@@ -41,6 +41,7 @@ export interface CastracaoAdminDTO {
   municipio: string;
   nomePet: string;
   especie: Especie;
+  raca: string | null;
   sexo: Sexo;
   pesoKg: number;
   idadeEstimada: string | null;
@@ -234,7 +235,9 @@ export function CastracaoCardAdmin({ item }: { item: CastracaoAdminDTO }) {
             <div>
               <h3 className="text-lg font-black text-neutral-900">{item.nomePet}</h3>
               <p className="text-xs text-neutral-600">
-                {ESPECIE_PET_LABEL[item.especie]} • {SEXO_PET_LABEL[item.sexo]}
+                {ESPECIE_PET_LABEL[item.especie]}
+                {` • Raça: ${item.raca || "Não informada"}`} •{" "}
+                {SEXO_PET_LABEL[item.sexo]}
                 {item.idadeEstimada ? ` • ${item.idadeEstimada}` : ""}
               </p>
             </div>

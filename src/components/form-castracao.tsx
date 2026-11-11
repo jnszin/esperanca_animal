@@ -36,6 +36,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
 
   const [nomePet, setNomePet] = useState("");
   const [especie, setEspecie] = useState<Especie>("CACHORRO");
+  const [raca, setRaca] = useState("");
   const [sexo, setSexo] = useState<Sexo>("FEMEA");
   const [pesoKg, setPesoKg] = useState("");
   const [idadeEstimada, setIdadeEstimada] = useState("");
@@ -116,6 +117,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
       formData.append("municipio", municipio);
       formData.append("nomePet", nomePet);
       formData.append("especie", especie);
+      formData.append("raca", raca);
       formData.append("sexo", sexo);
       formData.append("pesoKg", pesoKg);
       if (idadeEstimada.trim()) formData.append("idadeEstimada", idadeEstimada);
@@ -149,6 +151,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
   function resetarFormulario() {
     setProtocoloSucesso(null);
     setNomePet("");
+    setRaca("");
     setPesoKg("");
     setIdadeEstimada("");
     setObservacoesSaude("");
@@ -461,7 +464,21 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
             </select>
           </div>
 
-          <div className="sm:col-span-6 space-y-1.5">
+          <div className="sm:col-span-4 space-y-1.5">
+            <label className="block text-xs font-bold text-neutral-800">
+              Raça *
+            </label>
+            <input
+              type="text"
+              required
+              value={raca}
+              onChange={(e) => setRaca(e.target.value)}
+              placeholder="Ex: SRD (Vira-lata), Poodle, Siamês..."
+              className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+
+          <div className="sm:col-span-4 space-y-1.5">
             <label className="block text-xs font-bold text-neutral-800">
               Peso Aproximado do Pet (kg) *
             </label>
@@ -476,7 +493,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
             />
           </div>
 
-          <div className="sm:col-span-6 space-y-1.5">
+          <div className="sm:col-span-4 space-y-1.5">
             <label className="block text-xs font-bold text-neutral-800">
               Idade Estimada (Opcional)
             </label>

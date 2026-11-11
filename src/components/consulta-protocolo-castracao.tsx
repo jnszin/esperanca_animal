@@ -154,8 +154,10 @@ export function ConsultaProtocoloCastracao({
                 </div>
                 <p className="text-xs text-neutral-600 pt-1">
                   Pet <strong className="text-neutral-900">{resultado.nomePet}</strong> (
-                  {ESPECIE_PET_LABEL[resultado.especie]} • {SEXO_PET_LABEL[resultado.sexo]} •{" "}
-                  {resultado.pesoKg} kg) • Tutor(a): <strong>{resultado.primeiroNomeTutor}</strong>
+                  {ESPECIE_PET_LABEL[resultado.especie]}
+                  {resultado.raca ? ` • ${resultado.raca}` : ""} •{" "}
+                  {SEXO_PET_LABEL[resultado.sexo]} • {resultado.pesoKg} kg) • Tutor(a):{" "}
+                  <strong>{resultado.primeiroNomeTutor}</strong>
                 </p>
               </div>
             </div>

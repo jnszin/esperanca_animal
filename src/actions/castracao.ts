@@ -31,6 +31,7 @@ export interface ProtocoloPublicoDTO {
   primeiroNomeTutor: string;
   nomePet: string;
   especie: Especie;
+  raca: string | null;
   sexo: Sexo;
   pesoKg: number;
   municipio: string;
@@ -93,6 +94,7 @@ export async function criarSolicitacaoCastracao(
       municipio: formData.get("municipio") as string,
       nomePet: formData.get("nomePet") as string,
       especie: formData.get("especie") as Especie,
+      raca: formData.get("raca") as string,
       sexo: formData.get("sexo") as Sexo,
       pesoKg: pesoParsed,
       idadeEstimada: (formData.get("idadeEstimada") as string) || undefined,
@@ -167,6 +169,7 @@ export async function criarSolicitacaoCastracao(
         municipio: payload.municipio,
         nomePet: payload.nomePet,
         especie: payload.especie,
+        raca: payload.raca,
         sexo: payload.sexo,
         pesoKg: payload.pesoKg,
         idadeEstimada: payload.idadeEstimada || null,
@@ -218,6 +221,7 @@ export async function consultarProtocoloCastracao(
         nomeTutor: true,
         nomePet: true,
         especie: true,
+        raca: true,
         sexo: true,
         pesoKg: true,
         municipio: true,
@@ -249,6 +253,7 @@ export async function consultarProtocoloCastracao(
         primeiroNomeTutor: primeiroNome,
         nomePet: registro.nomePet,
         especie: registro.especie,
+        raca: registro.raca,
         sexo: registro.sexo,
         pesoKg: Number(registro.pesoKg),
         municipio: registro.municipio,
