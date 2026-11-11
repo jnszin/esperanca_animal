@@ -5,6 +5,11 @@ import Link from "next/link";
 import { TipoMoradia, Animal } from "@prisma/client";
 import { submeterSolicitacaoAdocao } from "@/actions/adocao";
 import {
+  CONTATO_ONG_ADOCAO,
+  formatarEspecieBadge,
+  formatarPorteAnimal,
+} from "@/lib/animal-labels";
+import {
   PawPrint,
   User,
   Home,
@@ -16,6 +21,8 @@ import {
   Loader2,
   MessageSquare,
   Sparkles,
+  Copy,
+  PhoneCall,
 } from "lucide-react";
 
 interface FormAdocaoMultistepProps {
@@ -31,6 +38,18 @@ export function FormAdocaoMultistep({ animal, fotoUrl }: FormAdocaoMultistepProp
   // Resultado de Sucesso
   const [protocoloGerado, setProtocoloGerado] = useState<string | null>(null);
   const [scoreFinal, setScoreFinal] = useState<number | null>(null);
+  const [copiado, setCopiado] = useState(false);
+
+  async function handleCopiarProtocolo() {
+    if (!protocoloGerado) return;
+    try {
+      await navigator.clipboard.writeText(protocoloGerado);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2500);
+    } catch {
+      // Clipboard indisponível
+    }
+  }
 
   // Estados dos Campos
   // Etapa 1: Dados Pessoais
@@ -161,7 +180,7 @@ export function FormAdocaoMultistep({ animal, fotoUrl }: FormAdocaoMultistepProp
             </span>
             <h2 className="text-xl sm:text-2xl font-black">Adotando o pet: {animal.nome}</h2>
             <p className="text-xs text-neutral-400">
-              {animal.especie === "CACHORRO" ? "Cão" : "Gato"} • {animal.porte}
+              {formatarEspecieBadge(animal.especie)} • {formatarPorteAnimal(animal.porte)}
             </p>
           </div>
         </div>
@@ -709,16 +728,25 @@ export function FormAdocaoMultistep({ animal, fotoUrl }: FormAdocaoMultistepProp
             <CheckCircle2 className="w-10 h-10" />
           </div>
 
-          <div className="space-y-2">
-            <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest">
+          <div className="space-y-3">
+            <span className="text-xs font-bold text-emerald-700 uppercase tracking-widest block">
               Solicitação Registrada com Sucesso!
             </span>
-            <h3 className="text-2xl sm:text-3xl font-black text-neutral-950">
-              Protocolo: {protocoloGerado}
+            <h3 className="text-2xl sm:text-3xl font-black text-neutral-950 font-mono">
+              {protocoloGerado}
             </h3>
+            <button
+              type="button"
+              onClick={handleCopiarProtocolo}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-xs font-semibold text-neutral-700 transition cursor-pointer"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span>{copiado ? "Protocolo copiado!" : "Copiar protocolo"}</span>
+            </button>
             <p className="text-xs text-neutral-500 max-w-md mx-auto">
-              Guardamos suas respostas e o robô da ONG enviou uma confirmação
-              instantânea no seu WhatsApp cadastrado.
+              Sua ficha de adoção para <strong>{animal.nome}</strong> já foi salva no
+              painel da ONG. Guarde seu código de protocolo ou envie diretamente no nosso
+              WhatsApp.
             </p>
           </div>
 
@@ -742,13 +770,25 @@ export function FormAdocaoMultistep({ animal, fotoUrl }: FormAdocaoMultistepProp
               <span>O que acontece agora?</span>
             </h4>
             <p className="text-xs text-emerald-800 leading-relaxed">
-              Nossos voluntários revisarão o seu perfil com carinho. Você receberá uma
-              mensagem no WhatsApp para tirar dúvidas e agendar a entrevista e visita
-              ao {animal.nome}.
+              Nossos voluntários analisarão sua ficha com carinho e entrarão em contato pelo
+              WhatsApp informado para conversar e combinar os próximos passos da adoção de{" "}
+              {animal.nome}.
             </p>
           </div>
 
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href={`https://wa.me/${CONTATO_ONG_ADOCAO.whatsappE164}?text=${encodeURIComponent(
+                `Olá! Acabei de enviar o formulário de adoção de *${animal.nome}* com o protocolo *${protocoloGerado}*.`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
+            >
+              <PhoneCall className="w-4 h-4" />
+              <span>Falar no WhatsApp da ONG</span>
+            </a>
+
             <Link
               href="/animais"
               className="px-6 py-3 bg-neutral-900 hover:bg-neutral-800 text-white font-bold rounded-xl text-xs transition"

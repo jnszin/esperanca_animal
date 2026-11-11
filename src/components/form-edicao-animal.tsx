@@ -16,6 +16,10 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import {
+  formatarIdadeAproximada,
+  obterFaixaEtariaAnimal,
+} from "@/lib/animal-labels";
 import Link from "next/link";
 
 const TEMPERAMENTOS_PRESET = [
@@ -331,6 +335,12 @@ export function FormEdicaoAnimal({ animal }: { animal: AnimalEdicaoProps }) {
               onChange={(e) => setIdadeEstimadaMeses(e.target.value)}
               className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-2xl border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
+            {Number(idadeEstimadaMeses) >= 1 && (
+              <p className="text-[11px] text-emerald-700 font-medium mt-1">
+                Exibição na vitrine: ~{formatarIdadeAproximada(Number(idadeEstimadaMeses))} (
+                {obterFaixaEtariaAnimal(Number(idadeEstimadaMeses)).labelSingular})
+              </p>
+            )}
           </div>
 
           <div>

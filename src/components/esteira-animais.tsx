@@ -4,6 +4,11 @@ import { useRef } from "react";
 import Link from "next/link";
 import { Especie, Porte, Sexo } from "@prisma/client";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import {
+  formatarEspecieBadge,
+  formatarIdadeAproximada,
+  formatarPorteAnimal,
+} from "@/lib/animal-labels";
 
 export interface AnimalEsteira {
   id: string;
@@ -86,8 +91,8 @@ export function EsteiraAnimais({ animais }: { animais: AnimalEsteira[] }) {
                     loading="lazy"
                   />
                   <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-xs text-neutral-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm border border-neutral-200/60">
-                    {animal.especie === "CACHORRO" ? "🐶 Cão" : animal.especie === "GATO" ? "🐱 Gato" : "🐾 Pet"} •{" "}
-                    {animal.porte}
+                    {formatarEspecieBadge(animal.especie)} •{" "}
+                    {formatarPorteAnimal(animal.porte)}
                   </div>
                 </div>
 
@@ -99,7 +104,8 @@ export function EsteiraAnimais({ animais }: { animais: AnimalEsteira[] }) {
                         {animal.nome}
                       </h3>
                       <span className="text-xs font-semibold text-neutral-500">
-                        {animal.sexo === "MACHO" ? "Macho" : "Fêmea"}
+                        {animal.sexo === "MACHO" ? "Macho" : "Fêmea"} • ~
+                        {formatarIdadeAproximada(animal.idadeEstimadaMeses)}
                       </span>
                     </div>
 

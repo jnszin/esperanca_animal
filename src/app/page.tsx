@@ -5,6 +5,10 @@ import { PublicFooter } from "@/components/public-footer";
 import { LiveRevalidator } from "@/components/live-revalidator";
 import { EsteiraAnimais } from "@/components/esteira-animais";
 import {
+  formatarIdadeAproximada,
+  formatarPorteAnimal,
+} from "@/lib/animal-labels";
+import {
   PawPrint,
   Heart,
   PhoneCall,
@@ -17,23 +21,6 @@ import {
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
-
-function formatarIdadeHero(meses: number): string {
-  if (meses < 12) {
-    return meses === 1 ? "1 mês" : `${meses} meses`;
-  }
-  const anos = Math.floor(meses / 12);
-  const resto = meses % 12;
-  const textoAno = anos === 1 ? "1 ano" : `${anos} anos`;
-  if (resto === 0) return textoAno;
-  return `${textoAno} e ${resto} ${resto === 1 ? "mês" : "meses"}`;
-}
-
-function formatarPorteHero(porte: string): string {
-  if (porte === "PEQUENO") return "Porte Pequeno";
-  if (porte === "MEDIO") return "Porte Médio";
-  return "Porte Grande";
-}
 
 export default async function HomePage() {
   const [animaisDisponiveis, animaisStats, noticiasRecentes] = await Promise.all([
@@ -192,10 +179,10 @@ export default async function HomePage() {
                         <>
                           <div>
                             <h3 className="text-xl font-bold text-neutral-900">
-                              {petDestaque.nome}, {formatarIdadeHero(petDestaque.idadeEstimadaMeses)}
+                              {petDestaque.nome}, {formatarIdadeAproximada(petDestaque.idadeEstimadaMeses)}
                             </h3>
                             <p className="text-xs text-neutral-500">
-                              {formatarPorteHero(petDestaque.porte)} • {petDestaque.raca}
+                              {formatarPorteAnimal(petDestaque.porte)} • {petDestaque.raca}
                             </p>
                           </div>
                           <Link

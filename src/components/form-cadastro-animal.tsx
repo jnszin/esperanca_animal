@@ -15,6 +15,10 @@ import {
   ShieldCheck,
   Plus,
 } from "lucide-react";
+import {
+  formatarIdadeAproximada,
+  obterFaixaEtariaAnimal,
+} from "@/lib/animal-labels";
 import Link from "next/link";
 
 const TEMPERAMENTOS_PRESET = [
@@ -288,6 +292,12 @@ export function FormCadastroAnimal({
               placeholder="Ex: 12 (1 ano), 6 (6 meses)"
               className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
+            {Number(idadeEstimadaMeses) >= 1 && (
+              <p className="text-[11px] text-emerald-700 font-medium mt-1">
+                Exibição na vitrine: ~{formatarIdadeAproximada(Number(idadeEstimadaMeses))} (
+                {obterFaixaEtariaAnimal(Number(idadeEstimadaMeses)).labelSingular})
+              </p>
+            )}
           </div>
 
           <div>

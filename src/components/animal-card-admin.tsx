@@ -20,6 +20,11 @@ import {
   X,
   Archive,
 } from "lucide-react";
+import {
+  formatarEspecieBadge,
+  formatarIdadeAproximada,
+  formatarPorteAnimal,
+} from "@/lib/animal-labels";
 import Link from "next/link";
 
 export interface AnimalAdminData {
@@ -196,17 +201,7 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
     }
   }
 
-  // Idade formatada
-  const anos = Math.floor(animal.idadeEstimadaMeses / 12);
-  const meses = animal.idadeEstimadaMeses % 12;
-  let idadeTexto = "";
-  if (anos > 0 && meses > 0) {
-    idadeTexto = `${anos} ano${anos > 1 ? "s" : ""} e ${meses} m`;
-  } else if (anos > 0) {
-    idadeTexto = `${anos} ano${anos > 1 ? "s" : ""}`;
-  } else {
-    idadeTexto = `${meses} mes${meses > 1 ? "es" : ""}`;
-  }
+  const idadeTexto = formatarIdadeAproximada(animal.idadeEstimadaMeses);
 
   const fotoUrl =
     animal.fotos[0]?.url ||
@@ -245,8 +240,8 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
               </div>
 
               <p className="text-xs text-neutral-500 truncate">
-                {animal.especie === "CACHORRO" ? "🐶 Cão" : animal.especie === "GATO" ? "🐱 Gato" : "🐾 Outro"} •{" "}
-                {animal.raca} • {idadeTexto} • Porte {animal.porte}
+                {formatarEspecieBadge(animal.especie)} •{" "}
+                {animal.raca} • ~{idadeTexto} • {formatarPorteAnimal(animal.porte)}
               </p>
 
               {/* Badges de Saúde */}

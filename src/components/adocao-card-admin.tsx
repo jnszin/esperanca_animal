@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { atualizarStatusAdocao } from "@/actions/adocao";
 import { StatusAdocao, TipoMoradia, Especie, Porte, Sexo } from "@prisma/client";
+import { formatarEspecieBadge, formatarPorteAnimal } from "@/lib/animal-labels";
 import {
   Phone,
   Mail,
@@ -224,7 +225,7 @@ export function AdocaoCardAdmin({ solicitacao }: { solicitacao: SolicitacaoAdoca
               {solicitacao.animal.nome}
             </h4>
             <p className="text-xs text-neutral-500 truncate">
-              {solicitacao.animal.especie === "CACHORRO" ? "🐶 Cão" : "🐱 Gato"} • {solicitacao.animal.porte}
+              {formatarEspecieBadge(solicitacao.animal.especie)} • {formatarPorteAnimal(solicitacao.animal.porte)}
             </p>
             {solicitacao.animal.exigeTelaProtecao && (
               <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">

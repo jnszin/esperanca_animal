@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { adocaoSchema, AdocaoFormData } from "@/schemas/adocao";
 import { calcularScoreTriagem } from "@/lib/triagem";
 import { notificarNovaAdocao, notificarAtualizacaoAdocao } from "@/lib/n8n";
+import { sanitizarWhatsappE164 } from "@/lib/utils";
 import { StatusAnimal, StatusAdocao } from "@prisma/client";
 import { requireAuth } from "@/lib/auth-checks";
 import { revalidatePath } from "next/cache";
@@ -73,16 +74,22 @@ export async function submeterSolicitacaoAdocao(
       cienteCustosMensais: payload.cienteCustosMensais,
     });
 
-    // 4. Geração de Protocolo Único (ex: "ADO-2026-7491")
+    // 4. Geração de Protocolo Único com verificação de colisão
     const anoAtual = new Date().getFullYear();
-    const codigoAleatorio = Math.floor(1000 + Math.random() * 9000);
-    const protocolo = `ADO-${anoAtual}-${codigoAleatorio}`;
-
-    // Sanitiza e padroniza WhatsApp para formato E.164 (5527999999999)
-    let wppFormatado = payload.whatsapp.replace(/\D/g, "");
-    if (!wppFormatado.startsWith("55") && (wppFormatado.length === 10 || wppFormatado.length === 11)) {
-      wppFormatado = `55${wppFormatado}`;
+    let protocolo = `ADO-${anoAtual}-${Math.floor(1000 + Math.random() * 9000)}`;
+    for (let tentativa = 0; tentativa < 5; tentativa++) {
+      const candidato = `ADO-${anoAtual}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const existente = await prisma.solicitacaoAdocao.findUnique({
+        where: { protocolo: candidato },
+        select: { id: true },
+      });
+      if (!existente) {
+        protocolo = candidato;
+        break;
+      }
     }
+
+    const wppFormatado = sanitizarWhatsappE164(payload.whatsapp);
 
     // 5. Gravação da Solicitação no PostgreSQL (VPS)
     await prisma.solicitacaoAdocao.create({

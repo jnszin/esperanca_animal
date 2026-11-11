@@ -3,6 +3,14 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PublicHeader } from "@/components/public-header";
 import { PublicFooter } from "@/components/public-footer";
+import { GaleriaAnimal } from "@/components/galeria-animal";
+import {
+  CONTATO_ONG_ADOCAO,
+  formatarIdadeAproximada,
+  formatarPorteAnimal,
+  gerarLinkWhatsappInteresseAnimal,
+  obterFaixaEtariaAnimal,
+} from "@/lib/animal-labels";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -11,6 +19,10 @@ import {
   Calendar,
   Sparkles,
   AlertTriangle,
+  Ruler,
+  PhoneCall,
+  Mail,
+  MapPin,
 } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -20,7 +32,6 @@ interface AnimalSlugPageProps {
   }>;
 }
 
-// Geração dinâmica de metadados para SEO e redes sociais (OpenGraph)
 export async function generateMetadata({
   params,
 }: AnimalSlugPageProps): Promise<Metadata> {
@@ -56,9 +67,17 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
     notFound();
   }
 
-  const fotoPrincipal =
-    animal.fotos[0]?.url ||
-    "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=800";
+  const faixaEtaria = obterFaixaEtariaAnimal(animal.idadeEstimadaMeses);
+  const idadeAproximada = formatarIdadeAproximada(animal.idadeEstimadaMeses);
+  const porteFormatado = formatarPorteAnimal(animal.porte);
+  const wppInteresseUrl = gerarLinkWhatsappInteresseAnimal({
+    nome: animal.nome,
+    porte: animal.porte,
+    idadeEstimadaMeses: animal.idadeEstimadaMeses,
+  });
+  const emailAssunto = encodeURIComponent(
+    `Interesse em adotar ${animal.nome} (${porteFormatado})`
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50 text-neutral-900">
@@ -78,118 +97,114 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            {/* Coluna Esquerda: Galeria de Fotos */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="relative aspect-4/3 rounded-3xl overflow-hidden bg-neutral-100 shadow-md border border-neutral-200">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={fotoPrincipal}
-                  alt={animal.nome}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-xs text-neutral-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
-                  {animal.especie === "CACHORRO" ? "🐶 Cachorro" : "🐱 Gato"} •{" "}
-                  {animal.porte}
-                </div>
+            {/* Coluna Esquerda: Galeria, Características e História */}
+            <div className="lg:col-span-7 space-y-6">
+              <GaleriaAnimal
+                nome={animal.nome}
+                especie={animal.especie}
+                porte={animal.porte}
+                idadeEstimadaMeses={animal.idadeEstimadaMeses}
+                exigeTelaProtecao={animal.exigeTelaProtecao}
+                fotos={animal.fotos.map((f) => ({ id: f.id, url: f.url }))}
+              />
 
-                {animal.exigeTelaProtecao && (
-                  <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>Exige Telas de Proteção</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Miniaturas de outras fotos */}
-              {animal.fotos.length > 1 && (
-                <div className="grid grid-cols-4 gap-3">
-                  {animal.fotos.map((foto) => (
-                    <div
-                      key={foto.id}
-                      className="aspect-square rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200 shadow-2xs"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={foto.url}
-                        alt={`Foto de ${animal.nome}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Temperamento */}
+              {/* Características & Temperamento */}
               <div className="bg-white p-6 rounded-3xl border border-neutral-200 space-y-3">
                 <h3 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-emerald-600" />
-                  <span>Personalidade & Temperamento</span>
+                  <span>Características &amp; Temperamento</span>
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {animal.temperamento.map((item) => (
-                    <span
-                      key={item}
-                      className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-semibold"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
+                {animal.temperamento.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {animal.temperamento.map((item) => (
+                      <span
+                        key={item}
+                        className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-semibold"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-neutral-500">
+                    Perfil comportamental em avaliação com a equipe de acolhimento.
+                  </p>
+                )}
               </div>
 
               {/* História do Resgate */}
               <div className="bg-white p-8 rounded-3xl border border-neutral-200 space-y-4">
-                <h3 className="text-lg font-bold text-neutral-950">A história do {animal.nome}</h3>
+                <h3 className="text-lg font-bold text-neutral-950">
+                  A história de {animal.nome}
+                </h3>
                 <p className="text-sm text-neutral-600 leading-relaxed whitespace-pre-line">
                   {animal.historia}
                 </p>
               </div>
             </div>
 
-            {/* Coluna Direita: Informações & Card de Adoção */}
+            {/* Coluna Direita: Ficha Resumida, Adoção e Contato Direto */}
             <div className="lg:col-span-5 space-y-6">
               <div className="bg-white p-8 rounded-3xl border border-neutral-200 shadow-sm space-y-6">
                 <div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <h1 className="text-3xl font-black text-neutral-950">
                       {animal.nome}
                     </h1>
-                    <span className="text-xs px-3 py-1 bg-neutral-100 text-neutral-700 font-bold rounded-full">
+                    <span className="text-xs px-3 py-1 bg-neutral-100 text-neutral-700 font-bold rounded-full shrink-0">
                       {animal.sexo === "MACHO" ? "Macho" : "Fêmea"}
                     </span>
                   </div>
                   <p className="text-sm text-neutral-500 mt-1">
-                    {animal.raca} • Resgatado pela Esperança Animal
+                    {animal.raca} • Acolhido pela Esperança Animal
                   </p>
                 </div>
 
-                {/* Métricas do Pet */}
+                {/* Ficha Técnica do Animal */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-neutral-50 p-3.5 rounded-2xl border border-neutral-100 flex items-center gap-3">
-                    <Calendar className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                    <Calendar className="w-5 h-5 text-emerald-600 shrink-0" />
                     <div>
-                      <span className="text-[11px] text-neutral-400 block font-medium">Idade</span>
-                      <span className="text-xs font-bold text-neutral-800">
-                        {Math.floor(animal.idadeEstimadaMeses / 12)} anos ({animal.idadeEstimadaMeses}m)
+                      <span className="text-[11px] text-neutral-500 block font-medium">
+                        Idade aproximada
+                      </span>
+                      <span className="text-xs font-bold text-neutral-900">
+                        ~{idadeAproximada} ({faixaEtaria.labelSingular})
                       </span>
                     </div>
                   </div>
 
                   <div className="bg-neutral-50 p-3.5 rounded-2xl border border-neutral-100 flex items-center gap-3">
-                    <Scale className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                    <Ruler className="w-5 h-5 text-emerald-600 shrink-0" />
                     <div>
-                      <span className="text-[11px] text-neutral-400 block font-medium">Peso</span>
-                      <span className="text-xs font-bold text-neutral-800">
-                        {animal.pesoKg ? `${animal.pesoKg} kg` : "Não inf."}
+                      <span className="text-[11px] text-neutral-500 block font-medium">
+                        Porte
+                      </span>
+                      <span className="text-xs font-bold text-neutral-900">
+                        {porteFormatado}
                       </span>
                     </div>
                   </div>
+
+                  {animal.pesoKg && (
+                    <div className="col-span-2 bg-neutral-50 p-3.5 rounded-2xl border border-neutral-100 flex items-center gap-3">
+                      <Scale className="w-5 h-5 text-emerald-600 shrink-0" />
+                      <div>
+                        <span className="text-[11px] text-neutral-500 block font-medium">
+                          Peso aproximado
+                        </span>
+                        <span className="text-xs font-bold text-neutral-900">
+                          {String(animal.pesoKg)} kg
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Status Veterinário */}
                 <div className="space-y-2.5 pt-4 border-t border-neutral-100">
                   <h4 className="text-xs font-bold text-neutral-700 uppercase tracking-wider">
-                    Saúde & Protocolos
+                    Saúde &amp; Cuidados
                   </h4>
 
                   <div className="space-y-2 text-xs">
@@ -199,7 +214,9 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
                           animal.castrado ? "text-emerald-600" : "text-neutral-300"
                         }`}
                       />
-                      <span>{animal.castrado ? "Castrado" : "Não castrado"}</span>
+                      <span>
+                        {animal.castrado ? "Castrado" : "Castração programada"}
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-2 text-neutral-700">
@@ -208,7 +225,11 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
                           animal.vacinado ? "text-emerald-600" : "text-neutral-300"
                         }`}
                       />
-                      <span>{animal.vacinado ? "Carteira de Vacinação em Dia" : "Vacinação pendente"}</span>
+                      <span>
+                        {animal.vacinado
+                          ? "Carteira de vacinação em dia"
+                          : "Vacinação em andamento"}
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-2 text-neutral-700">
@@ -217,8 +238,19 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
                           animal.vermifugado ? "text-emerald-600" : "text-neutral-300"
                         }`}
                       />
-                      <span>{animal.vermifugado ? "Vermifugado recentemente" : "Pendente"}</span>
+                      <span>
+                        {animal.vermifugado
+                          ? "Vermifugado recentemente"
+                          : "Vermifugação pendente"}
+                      </span>
                     </div>
+
+                    {animal.necessidadesEspeciais && (
+                      <div className="flex items-center gap-2 text-amber-800 font-semibold">
+                        <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                        <span>Animal com cuidados especiais</span>
+                      </div>
+                    )}
 
                     {animal.descricaoSaude && (
                       <p className="text-[11px] text-neutral-500 pt-1 italic">
@@ -228,7 +260,7 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
                   </div>
                 </div>
 
-                {/* Botão de Ação para o Formulário de Adoção */}
+                {/* Ação de Adoção */}
                 <div className="pt-4 border-t border-neutral-100 space-y-3">
                   {animal.status === "DISPONIVEL" ? (
                     <>
@@ -240,9 +272,9 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
                         <span>Iniciar Formulário de Adoção</span>
                       </Link>
 
-                      <p className="text-[11px] text-neutral-400 text-center leading-relaxed">
-                        Você responderá a um questionário rápido de 3 etapas. A triagem
-                        calcula a compatibilidade na hora e gera seu protocolo.
+                      <p className="text-[11px] text-neutral-500 text-center leading-relaxed">
+                        Preencha o questionário de 3 etapas para gerar seu protocolo e
+                        agilizar nossa conversa sobre {animal.nome}.
                       </p>
                     </>
                   ) : (
@@ -279,6 +311,47 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
                       </Link>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Informações para Contato Direto */}
+              <div className="bg-white p-6 rounded-3xl border border-neutral-200 shadow-xs space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-neutral-950">
+                    Informações para Contato
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Quer tirar dúvidas sobre {animal.nome} ou agendar uma visita? Fale
+                    com a equipe da Esperança Animal:
+                  </p>
+                </div>
+
+                <a
+                  href={wppInteresseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 bg-neutral-900 hover:bg-neutral-800 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-2 transition"
+                >
+                  <PhoneCall className="w-4 h-4 text-emerald-400" />
+                  <span>
+                    WhatsApp: {CONTATO_ONG_ADOCAO.whatsappVisual}
+                  </span>
+                </a>
+
+                <div className="space-y-2 pt-1 text-xs text-neutral-600">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <a
+                      href={`mailto:${CONTATO_ONG_ADOCAO.email}?subject=${emailAssunto}`}
+                      className="hover:text-emerald-700 font-medium break-all transition"
+                    >
+                      {CONTATO_ONG_ADOCAO.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{CONTATO_ONG_ADOCAO.regiaoAtendimento}</span>
+                  </div>
                 </div>
               </div>
             </div>
