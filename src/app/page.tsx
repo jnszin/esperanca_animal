@@ -197,7 +197,7 @@ export default async function HomePage() {
                         <>
                           <div>
                             <h3 className="text-lg font-bold text-neutral-900">
-                              Vitrine Esperança Animal
+                              Vitrine Projeto Esperança Animal
                             </h3>
                             <p className="text-xs text-neutral-500">
                               Acompanhe novos resgates e histórias reais
@@ -313,7 +313,7 @@ export default async function HomePage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="space-y-1">
                 <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">
-                  Diário Esperança Animal
+                  Diário Projeto Esperança Animal
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 tracking-tight">
                   Projetos Realizados &amp; Histórias de Resgate
@@ -418,7 +418,7 @@ export default async function HomePage() {
                   Não pode adotar agora? Você pode salvar uma vida hoje.
                 </h2>
                 <p className="text-sm text-neutral-400 leading-relaxed">
-                  Nossa ONG é mantida 100% pelo apoio da comunidade. Você pode
+                  O Projeto Esperança Animal é mantido 100% pelo apoio da comunidade. Você pode
                   ajudar oferecendo ração, shampoos e itens de higiene,
                   medicamentos, doações financeiras ou apoio em transporte e
                   cuidado dos animais resgatados.
@@ -430,7 +430,7 @@ export default async function HomePage() {
                     className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 text-sm transition"
                   >
                     <Heart className="w-4 h-4 fill-white" />
-                    <span>Ajude a ONG (Doações &amp; Insumos)</span>
+                    <span>Ajude o Projeto (Doações &amp; Insumos)</span>
                   </Link>
                   <Link
                     href="/castracao"

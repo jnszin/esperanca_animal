@@ -5,8 +5,8 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Publicar Notícia | Esperança Animal",
-  description: "Formulário de criação de posts para o Blog da ONG.",
+  title: "Publicar Notícia | Projeto Esperança Animal",
+  description: "Formulário de criação de posts para o Blog do projeto.",
 };
 
 export default async function NovaNoticiaPage() {

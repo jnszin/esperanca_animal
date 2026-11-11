@@ -6,8 +6,8 @@ import { ArrowLeft, PawPrint, Plus } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gestão e Catálogo de Animais | Esperança Animal",
-  description: "Painel de gestão, atualização clínica e vitrine de animais da ONG.",
+  title: "Gestão e Catálogo de Animais | Projeto Esperança Animal",
+  description: "Painel de gestão, atualização clínica e vitrine de animais do projeto.",
 };
 
 export default async function DashboardAnimaisPage() {

@@ -680,7 +680,7 @@ export function FormAdocaoMultistep({ animal, fotoUrl }: FormAdocaoMultistepProp
                   className="w-4 h-4 text-emerald-600 rounded mt-0.5"
                 />
                 <span className="text-xs text-neutral-600 leading-relaxed">
-                  Concordo com os termos da LGPD e autorizo a ONG Esperança Animal a
+                  Concordo com os termos da LGPD e autorizo o Projeto Esperança Animal a
                   utilizar meus dados e WhatsApp exclusivamente para contato sobre este
                   processo de adoção.
                 </span>
@@ -745,7 +745,7 @@ export function FormAdocaoMultistep({ animal, fotoUrl }: FormAdocaoMultistepProp
             </button>
             <p className="text-xs text-neutral-500 max-w-md mx-auto">
               Sua ficha de adoção para <strong>{animal.nome}</strong> já foi salva no
-              painel da ONG. Guarde seu código de protocolo ou envie diretamente no nosso
+              painel do projeto. Guarde seu código de protocolo ou envie diretamente no nosso
               WhatsApp.
             </p>
           </div>
@@ -786,7 +786,7 @@ export function FormAdocaoMultistep({ animal, fotoUrl }: FormAdocaoMultistepProp
               className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
             >
               <PhoneCall className="w-4 h-4" />
-              <span>Falar no WhatsApp da ONG</span>
+              <span>Falar no WhatsApp do Projeto</span>
             </a>
 
             <Link

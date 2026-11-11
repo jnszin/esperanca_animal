@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Resgates & Canais das Prefeituras | Esperança Animal",
+  title: "Resgates & Canais das Prefeituras | Projeto Esperança Animal",
   description:
     "Confira os canais oficiais das prefeituras da Grande Vitória para gerar protocolo de resgate e registre animais encontrados com foto e localização.",
 };
@@ -190,7 +190,7 @@ export default function ChamadosPage() {
           <div className="space-y-3">
             <div className="px-1">
               <span className="text-xs font-bold uppercase tracking-wider text-red-700 block">
-                Passo 2 • Registro na ONG Esperança Animal
+                Passo 2 • Registro no Projeto Esperança Animal
               </span>
               <h2 className="text-2xl font-black text-neutral-950">
                 Formulário para Registrar Animal Encontrado

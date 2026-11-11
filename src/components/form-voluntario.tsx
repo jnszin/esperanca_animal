@@ -342,7 +342,7 @@ export function FormVoluntario({
             className="mt-0.5 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-neutral-300 shrink-0"
           />
           <span className="text-xs text-neutral-700 leading-relaxed">
-            Autorizo a equipe da Esperança Animal a entrar em contato comigo pelo
+            Autorizo a equipe do Projeto Esperança Animal a entrar em contato comigo pelo
             telefone/WhatsApp informado exclusivamente para organizar atividades
             voluntárias (LGPD).
           </span>

@@ -6,8 +6,8 @@ import { ArrowLeft, Newspaper, Plus } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gestão do Blog & Notícias | Esperança Animal",
-  description: "Painel de publicação e gerenciamento de notícias, projetos e relatos da ONG.",
+  title: "Gestão do Blog & Notícias | Projeto Esperança Animal",
+  description: "Painel de publicação e gerenciamento de notícias, ações e relatos do projeto.",
 };
 
 export default async function DashboardNoticiasPage() {
@@ -52,7 +52,7 @@ export default async function DashboardNoticiasPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-neutral-900">
-                  Blog & Notícias da ONG
+                  Blog &amp; Notícias do Projeto
                 </h1>
                 <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
                   Fase 9 • Comunicação
@@ -101,7 +101,7 @@ export default async function DashboardNoticiasPage() {
               Nenhuma matéria cadastrada ainda
             </h3>
             <p className="text-xs text-neutral-500 max-w-md mx-auto">
-              Clique no botão acima para criar seu primeiro post e compartilhar as conquistas da ONG.
+              Clique no botão acima para criar seu primeiro post e compartilhar as conquistas do projeto.
             </p>
           </div>
         ) : (

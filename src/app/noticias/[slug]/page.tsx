@@ -19,11 +19,11 @@ export async function generateMetadata({
   });
 
   if (!noticia) {
-    return { title: "Artigo Não Encontrado | Esperança Animal" };
+    return { title: "Artigo Não Encontrado | Projeto Esperança Animal" };
   }
 
   return {
-    title: `${noticia.titulo} | Blog Esperança Animal`,
+    title: `${noticia.titulo} | Blog Projeto Esperança Animal`,
     description: noticia.subtitulo || noticia.conteudo.substring(0, 150),
   };
 }

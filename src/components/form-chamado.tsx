@@ -185,7 +185,7 @@ export function FormChamado() {
       ? ` (Protocolo Prefeitura: ${protocoloPrefeitura.trim()})`
       : "";
     const wppMsg = encodeURIComponent(
-      `Olá! Registrei o chamado de resgate com protocolo ${protocoloSucesso}${protocoloPrefTexto} na Esperança Animal.`
+      `Olá! Registrei o chamado de resgate com protocolo ${protocoloSucesso}${protocoloPrefTexto} no Projeto Esperança Animal.`
     );
 
     return (
@@ -209,7 +209,7 @@ export function FormChamado() {
 
         <div className="p-5 bg-neutral-50 rounded-2xl border border-dashed border-neutral-300 max-w-md mx-auto space-y-2.5">
           <span className="text-xs text-neutral-500 font-semibold uppercase tracking-wider block">
-            Número de Protocolo Esperança Animal
+            Número de Protocolo Projeto Esperança Animal
           </span>
           <span className="text-2xl font-mono font-black text-emerald-800 tracking-wider block">
             {protocoloSucesso}
@@ -240,7 +240,7 @@ export function FormChamado() {
             className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition"
           >
             <PhoneCall className="w-4 h-4" />
-            <span>Enviar no WhatsApp da ONG</span>
+            <span>Enviar no WhatsApp do Projeto</span>
           </a>
 
           <button
@@ -585,7 +585,7 @@ export function FormChamado() {
           <div>
             <span className="text-xs font-bold text-emerald-950 flex items-center gap-1.5">
               <Heart className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600" />
-              Posso oferecer Lar Temporário (LT) para este animal enquanto a ONG cuida das doações e adoção!
+              Posso oferecer Lar Temporário (LT) para este animal enquanto o projeto cuida das doações e adoção!
             </span>
             <p className="text-xs text-emerald-800 mt-0.5">
               Como o abrigo opera com capacidade limitada, acolhimentos com lar temporário
@@ -607,7 +607,7 @@ export function FormChamado() {
             <span className="font-semibold text-neutral-800 block mb-0.5">
               Consentimento LGPD & Veracidade das Informações
             </span>
-            Declaro que as informações fornecidas são verdadeiras e autorizo a ONG
+            Declaro que as informações fornecidas são verdadeiras e autorizo o Projeto
             Esperança Animal a processar meus dados exclusivamente para fins de
             atendimento a este resgate e contato via WhatsApp, nos termos da Lei Geral
             de Proteção de Dados (Lei nº 13.709/2018).

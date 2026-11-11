@@ -12,7 +12,7 @@ export interface CanalPrefeituraInfo {
 
 /**
  * Canais municipais verificados nos portais oficiais (.es.gov.br) para orientação
- * sobre abertura de protocolo antes ou em paralelo ao registro na ONG.
+ * sobre abertura de protocolo antes ou em paralelo ao registro no projeto.
  */
 export const CANAIS_PREFEITURAS_RESGATE: CanalPrefeituraInfo[] = [
   {
@@ -84,7 +84,7 @@ export function gerarLinkWhatsappChamado(
   const statusLabel = STATUS_CHAMADO_LABEL[params.status];
 
   const linhas = [
-    `Olá, *${params.nomeSolicitante}*! Aqui é da equipe da *ONG Esperança Animal*. 🐾`,
+    `Olá, *${params.nomeSolicitante}*! Aqui é da equipe do *Projeto Esperança Animal*. 🐾`,
     "",
     `Sobre o chamado de resgate *${params.protocolo}* (${params.cidade}):`,
     `📌 *Status atual:* ${statusLabel}`,

@@ -7,7 +7,7 @@ import { Especie } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Cadastrar Novo Animal | Esperança Animal",
+  title: "Cadastrar Novo Animal | Projeto Esperança Animal",
   description: "Formulário de inclusão de pet na vitrine pública com upload de fotos no Cloudflare R2.",
 };
 

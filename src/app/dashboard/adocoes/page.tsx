@@ -6,7 +6,7 @@ import { ArrowLeft, Heart } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gestão e Avaliação de Adoções | Esperança Animal",
+  title: "Gestão e Avaliação de Adoções | Projeto Esperança Animal",
   description: "Painel de triagem e avaliação de candidaturas de adoção responsável.",
 };
 

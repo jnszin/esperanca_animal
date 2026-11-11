@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Esperança Animal | Plataforma de Adoção e Resgate",
-  description: "Plataforma de adoção responsável, acolhimento de animais e doações da ONG Esperança Animal.",
+  title: "Projeto Esperança Animal | Plataforma de Adoção e Resgate",
+  description: "Plataforma de adoção responsável, acolhimento de animais e apoio ao Projeto Esperança Animal.",
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },

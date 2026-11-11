@@ -12,7 +12,7 @@ export function PublicFooter() {
               <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center font-bold">
                 <PawPrint className="w-5 h-5" />
               </div>
-              <span className="font-bold text-lg text-white">Esperança Animal</span>
+              <span className="font-bold text-lg text-white">Projeto Esperança Animal</span>
             </div>
             <p className="text-xs text-neutral-400 leading-relaxed">
               Trabalhamos pelo resgate, reabilitação e adoção consciente de animais
@@ -46,7 +46,7 @@ export function PublicFooter() {
               </li>
               <li>
                 <Link href="/noticias" className="hover:text-emerald-400 transition">
-                  Blog & Projetos da ONG
+                  Blog &amp; Diário do Projeto
                 </Link>
               </li>
             </ul>
@@ -94,14 +94,14 @@ export function PublicFooter() {
               <p className="text-[11px] leading-relaxed">
                 Todos os dados informados em cadastros de adoção e resgates são
                 armazenados com criptografia e usados estritamente para contato
-                oficial da ONG.
+                oficial do projeto.
               </p>
             </div>
           </div>
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-          <p>© {new Date().getFullYear()} ONG Esperança Animal. Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} Projeto Esperança Animal. Todos os direitos reservados.</p>
           <div className="flex items-center gap-1 text-neutral-400">
             <span>Desenvolvido com</span>
             <Heart className="w-3.5 h-3.5 text-red-500 inline fill-red-500" />

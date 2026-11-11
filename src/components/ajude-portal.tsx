@@ -289,7 +289,7 @@ export function AjudePortal({ initialAba = "doacoes" }: AjudePortalProps) {
                 </h2>
                 <p className="text-xs text-neutral-600 mt-1 leading-relaxed">
                   Acolha um animal em recuperação ou filhote por um período
-                  combinado enquanto a ONG busca um adotante definitivo.
+                  combinado enquanto o projeto busca um adotante definitivo.
                 </p>
               </div>
               <span className="inline-block text-xs font-bold text-amber-700">

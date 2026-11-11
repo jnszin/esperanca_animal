@@ -7,7 +7,7 @@ import { ArrowLeft, Pencil } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Editar Animal | Esperança Animal",
+  title: "Editar Animal | Projeto Esperança Animal",
   description: "Edição completa da ficha clínica, história e fotos do pet.",
 };
 

@@ -603,7 +603,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
             className="mt-0.5 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-neutral-300 shrink-0"
           />
           <span className="text-xs text-neutral-700 leading-relaxed">
-            Autorizo a ONG Esperança Animal a utilizar estes dados exclusivamente para
+            Autorizo o Projeto Esperança Animal a utilizar estes dados exclusivamente para
             avaliação e envio de avisos sobre este protocolo no meu WhatsApp (LGPD).
           </span>
         </label>

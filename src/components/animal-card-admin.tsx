@@ -58,7 +58,7 @@ const MOTIVOS_PRONTOS = [
   "Animal adotado por outra família (fora da plataforma)",
   "Cadastro duplicado ou preenchido por engano",
   "Animal devolvido ao tutor original / reencontro",
-  "Transferido para lar temporário externo ou ONG parceira",
+  "Transferido para lar temporário externo ou projeto parceiro",
   "Em tratamento veterinário intensivo (retirado temporariamente)",
   "Óbito / Falecimento do animal",
   "Outro motivo (especificar abaixo)",
@@ -442,7 +442,7 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
 
             <div className="space-y-4">
               <p className="text-xs text-neutral-600 leading-relaxed">
-                Para manter a integridade dos relatórios e auditoria da ONG, o animal será
+                Para manter a integridade dos relatórios e auditoria do projeto, o animal será
                 <strong> retirado imediatamente da vitrine pública</strong> e transferido para
                 a aba de <strong>Arquivados</strong>. Selecione o motivo oficial:
               </p>

@@ -4,8 +4,8 @@ import { auth } from "@/auth";
 import { AdminLoginForm } from "@/components/admin-login-form";
 
 export const metadata: Metadata = {
-  title: "Acesso Administrativo | Esperança Animal",
-  description: "Entrada restrita da administração da ONG Esperança Animal.",
+  title: "Acesso Administrativo | Projeto Esperança Animal",
+  description: "Entrada restrita da administração do Projeto Esperança Animal.",
   robots: {
     index: false,
     follow: false,

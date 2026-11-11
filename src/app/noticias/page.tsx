@@ -7,8 +7,8 @@ import { Newspaper, Clock, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog & Notícias | Esperança Animal",
-  description: "Acompanhe os projetos concluídos, histórias emocionantes de resgates e dicas de cuidados veterinários da ONG Esperança Animal.",
+  title: "Blog & Notícias | Projeto Esperança Animal",
+  description: "Acompanhe os projetos concluídos, histórias emocionantes de resgates e dicas de cuidados veterinários do Projeto Esperança Animal.",
 };
 
 interface NoticiasPageProps {
@@ -50,7 +50,7 @@ export default async function NoticiasPage({ searchParams }: NoticiasPageProps) 
         <section className="bg-[#e8d5be] py-16 md:py-20 border-b border-amber-200/60 text-center relative overflow-hidden">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
             <span className="text-xs uppercase tracking-widest font-black text-amber-900/80 mb-2 block">
-              Esperança Animal em Ação
+              Projeto Esperança Animal em Ação
             </span>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-white tracking-tight drop-shadow-xs font-bold">
               Nosso Blog

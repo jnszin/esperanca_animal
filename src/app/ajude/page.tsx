@@ -5,9 +5,9 @@ import { AjudePortal, type AbaAjudePortal } from "@/components/ajude-portal";
 import { HeartHandshake } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Ajude a ONG | Doações, Insumos & Voluntários | Esperança Animal",
+  title: "Ajude o Projeto | Doações, Insumos & Voluntários | Projeto Esperança Animal",
   description:
-    "Apoie a Esperança Animal com doações financeiras, ração, shampoos e medicamentos, ou cadastre-se como voluntário para passeios, lar temporário e apoio.",
+    "Apoie o Projeto Esperança Animal com doações financeiras, ração, shampoos e medicamentos, ou cadastre-se como voluntário para passeios, lar temporário e apoio.",
 };
 
 interface AjudePageProps {
@@ -39,7 +39,7 @@ export default async function AjudePage({ searchParams }: AjudePageProps) {
             <p className="text-base text-neutral-600 max-w-2xl mx-auto leading-relaxed">
               Você pode apoiar financeiramente, oferecer ração, shampoos e
               medicamentos, ou se cadastrar como voluntário para passeios, lar
-              temporário e ações da ONG.
+              temporário e ações do projeto.
             </p>
           </div>
 

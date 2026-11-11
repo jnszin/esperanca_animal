@@ -163,7 +163,7 @@ export function AdocaoCardAdmin({ solicitacao }: { solicitacao: SolicitacaoAdoca
 
   const wppNumero = solicitacao.whatsapp.replace(/\D/g, "");
   const wppMsg = encodeURIComponent(
-    `Olá, ${solicitacao.nomeAdotante}! Sou voluntário da ONG Esperança Animal sobre sua solicitação de adoção para o pet ${solicitacao.animal.nome} (Protocolo: ${solicitacao.protocolo}). Poderíamos conversar?`
+    `Olá, ${solicitacao.nomeAdotante}! Aqui é da equipe do Projeto Esperança Animal sobre sua solicitação de adoção para o pet ${solicitacao.animal.nome} (Protocolo: ${solicitacao.protocolo}). Poderíamos conversar?`
   );
 
   const fotoAnimalUrl =

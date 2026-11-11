@@ -27,7 +27,7 @@ export const MODALIDADE_VOLUNTARIADO_CONFIG: Record<
     label: "Lar Temporário (LT)",
     shortLabel: "Lar Temporário",
     descricao:
-      "Acolher temporariamente um animal resgatado em casa enquanto a ONG providencia cuidados e adoção definitiva.",
+      "Acolher temporariamente um animal resgatado em casa enquanto o projeto providencia cuidados e adoção definitiva.",
     badge: "bg-amber-100 text-amber-900 border-amber-200",
     placeholderDescricao:
       "Informe se mora em casa murada ou apartamento telado, se já possui outros animais ou crianças e se pode acolher cão ou gato...",
@@ -95,7 +95,7 @@ export function gerarLinkWhatsappVoluntario(
   const modalidadeLabel = MODALIDADE_VOLUNTARIADO_CONFIG[params.modalidade].label;
 
   const linhas = [
-    `Olá, *${params.nome}*! Aqui é da equipe da *ONG Esperança Animal*. 🐾`,
+    `Olá, *${params.nome}*! Aqui é da equipe do *Projeto Esperança Animal*. 🐾`,
     "",
     `Recebemos seu cadastro como voluntário(a) na modalidade *${modalidadeLabel}* (Protocolo *${params.protocolo}*).`,
     `📍 *Município:* ${params.municipio}`,

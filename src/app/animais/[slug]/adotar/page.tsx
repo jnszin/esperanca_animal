@@ -23,11 +23,11 @@ export async function generateMetadata({
   });
 
   if (!animal) {
-    return { title: "Adoção | Esperança Animal" };
+    return { title: "Adoção | Projeto Esperança Animal" };
   }
 
   return {
-    title: `Formulário de Adoção de ${animal.nome} | Esperança Animal`,
+    title: `Formulário de Adoção de ${animal.nome} | Projeto Esperança Animal`,
     description: `Preencha a pré-triagem de adoção para o pet ${animal.nome}.`,
   };
 }

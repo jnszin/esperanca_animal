@@ -8,7 +8,7 @@ import { Bell, MapPin, ShieldCheck, Syringe } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Castração & Vacinação de Pets | Esperança Animal",
+  title: "Castração & Vacinação de Pets | Projeto Esperança Animal",
   description:
     "Cadastre seu pet para solicitação de castração ou vacinação e acompanhe o andamento do protocolo com avisos da nossa equipe.",
 };

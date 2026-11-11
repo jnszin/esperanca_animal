@@ -112,7 +112,7 @@ export async function notificarNovaAdocao(params: {
       nomeAdotante: params.nomeAdotante,
       nomeAnimal: params.nomeAnimal,
       scoreTriagem: params.scoreTriagem,
-      mensagem: `Olá, ${params.nomeAdotante}! Sua solicitação de adoção para o(a) ${params.nomeAnimal} foi recebida com sucesso! Protocolo: ${params.protocolo}. Nossa equipe da Esperança Animal entrará em contato em breve.`,
+      mensagem: `Olá, ${params.nomeAdotante}! Sua solicitação de adoção para o(a) ${params.nomeAnimal} foi recebida com sucesso! Protocolo: ${params.protocolo}. Nossa equipe do Projeto Esperança Animal entrará em contato em breve.`,
     },
   });
 }
@@ -138,7 +138,7 @@ export async function notificarNovoChamado(params: {
       especie: params.especie,
       nivelUrgencia: params.nivelUrgencia,
       localizacao: `${params.bairro}, ${params.cidade}`,
-      mensagem: `Olá, ${params.nomeSolicitante}! O chamado de resgate (${params.protocolo}) foi registrado na ONG Esperança Animal. Classificação de urgência: ${params.nivelUrgencia}. Fique atento a este canal para atualizações.`,
+      mensagem: `Olá, ${params.nomeSolicitante}! O chamado de resgate (${params.protocolo}) foi registrado no Projeto Esperança Animal. Classificação de urgência: ${params.nivelUrgencia}. Fique atento a este canal para atualizações.`,
     },
   });
 }
@@ -191,7 +191,7 @@ export async function notificarPixConfirmado(params: {
       nomeDoador: params.nomeDoador,
       valor: valorFormatado,
       campanha: params.campanhaTitulo || "Doação Geral",
-      mensagem: `Muito obrigado, ${params.nomeDoador}! Sua doação Pix no valor de ${valorFormatado} para a ONG Esperança Animal foi confirmada! Seu apoio salva vidas de animais resgatados. ❤️🐾`,
+      mensagem: `Muito obrigado, ${params.nomeDoador}! Sua doação Pix no valor de ${valorFormatado} para o Projeto Esperança Animal foi confirmada! Seu apoio salva vidas de animais resgatados. ❤️🐾`,
     },
   });
 }

@@ -4,8 +4,8 @@ import { EmConstrucao } from "@/components/em-construcao";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Página em Construção | Esperança Animal",
-  description: "Esta página ou funcionalidade está em fase de desenvolvimento na plataforma Esperança Animal.",
+  title: "Página em Construção | Projeto Esperança Animal",
+  description: "Esta página ou funcionalidade está em fase de desenvolvimento no Projeto Esperança Animal.",
 };
 
 export default function NotFound() {

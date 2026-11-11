@@ -51,7 +51,7 @@ export const STATUS_SERVICO_CONFIG: Record<
     badge: "bg-neutral-100 text-neutral-800 border-neutral-300",
     border: "border-l-4 border-l-neutral-400",
     avisoPadrao:
-      "Caso registrado com sucesso! Sua solicitação já está com a equipe da Esperança Animal para avaliação.",
+      "Caso registrado com sucesso! Sua solicitação já está com a equipe do Projeto Esperança Animal para avaliação.",
     ordem: 1,
   },
   EM_ANALISE: {
@@ -141,7 +141,7 @@ export function gerarMensagemWhatsappCastracao(
   )}`;
 
   const linhas = [
-    `Olá, *${params.nomeTutor}*! Aqui é da equipe da *ONG Esperança Animal*. 🐾`,
+    `Olá, *${params.nomeTutor}*! Aqui é da equipe do *Projeto Esperança Animal*. 🐾`,
     "",
     `Atualizamos o andamento do pedido de *${servicoLabel}* para o(a) pet *${params.nomePet}* (${params.municipio}):`,
     `📋 *Protocolo:* ${params.protocolo}`,

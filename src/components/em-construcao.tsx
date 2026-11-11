@@ -10,7 +10,7 @@ interface EmConstrucaoProps {
 
 export function EmConstrucao({
   titulo = "Funcionalidade em Desenvolvimento",
-  subtitulo = "Estamos construindo este módulo para aprimorar ainda mais o atendimento e a gestão da ONG.",
+  subtitulo = "Estamos construindo este módulo para aprimorar ainda mais o atendimento e a gestão do projeto.",
   modulo = "Em Breve",
   previsao = "Próxima Etapa do Projeto",
 }: EmConstrucaoProps) {
@@ -45,7 +45,7 @@ export function EmConstrucao({
 
         {/* Caixa de Contexto Acadêmico / Projeto Integrador */}
         <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-500 leading-relaxed max-w-md mx-auto">
-          Esta tela faz parte do roadmap de evolução da plataforma <strong>Patas em Dia / Esperança Animal</strong> e será ativada na próxima fase de integração.
+          Esta tela faz parte do roadmap de evolução da plataforma <strong>Projeto Esperança Animal</strong> e será ativada na próxima fase de integração.
         </div>
 
         {/* Botões de Ação */}

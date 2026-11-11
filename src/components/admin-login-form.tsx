@@ -62,7 +62,7 @@ export function AdminLoginForm({
             <PawPrint className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-bold text-neutral-900">
-            Esperança Animal
+            Projeto Esperança Animal
           </h1>
           <p className="text-sm text-neutral-500 mt-1">
             Acesso Restrito ao Painel Administrativo
@@ -92,7 +92,7 @@ export function AdminLoginForm({
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@esperancaanimal.ong.br"
+                placeholder="admin@projetoesperancaanimal.com.br"
                 className="w-full pl-11 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
               />
             </div>
@@ -137,7 +137,7 @@ export function AdminLoginForm({
 
         <div className="mt-8 pt-6 border-t border-neutral-100 flex flex-col items-center gap-3 text-center">
           <p className="text-xs text-neutral-400">
-            Área de uso exclusivo da administração da ONG.
+            Área de uso exclusivo da administração do projeto.
           </p>
           <Link
             href="/"

@@ -41,7 +41,7 @@ export const TIPO_AJUDA_CONFIG: Record<
   },
   OUTROS: {
     label: "Outra Forma de Ajuda",
-    descricao: "Qualquer outro material ou apoio que queira oferecer à ONG",
+    descricao: "Qualquer outro material ou apoio que queira oferecer ao projeto",
     badge: "bg-neutral-100 text-neutral-800 border-neutral-300",
   },
 };
@@ -55,7 +55,7 @@ export const IDEIAS_MENSAGENS_AJUDA: {
     titulo: "Ração sobrando aqui",
     tipo: "RACAO",
     texto:
-      "Olá equipe! Consigo ajudar com ração animal pois tenho sobrando aqui em casa e gostaria de doar para os cães e gatos da ONG.",
+      "Olá equipe! Consigo ajudar com ração animal pois tenho sobrando aqui em casa e gostaria de doar para os cães e gatos do projeto.",
   },
   {
     titulo: "Shampoos p/ cães e gatos",
@@ -67,19 +67,19 @@ export const IDEIAS_MENSAGENS_AJUDA: {
     titulo: "Remédios ou antipulgas",
     tipo: "MEDICAMENTOS",
     texto:
-      "Olá equipe! Tenho medicamentos/antipulgas veterinários dentro do prazo de validade disponíveis para doar à ONG.",
+      "Olá equipe! Tenho medicamentos/antipulgas veterinários dentro do prazo de validade disponíveis para doar ao projeto.",
   },
   {
     titulo: "Cobertores e acessórios",
     tipo: "ACESSORIOS",
     texto:
-      "Olá equipe! Consigo doar cobertores, toalhas, potes de água ou caminhas em ótimo estado para ajudar no abrigo.",
+      "Olá equipe! Consigo doar cobertores, toalhas, potes de água ou caminhas em ótimo estado para ajudar nos cuidados com os animais.",
   },
   {
     titulo: "Carona ou apoio prático",
     tipo: "VOLUNTARIADO_TRANSPORTE",
     texto:
-      "Olá equipe! Gostaria de ajudar oferecendo transporte solidário para consultas veterinárias ou apoio em ações da ONG.",
+      "Olá equipe! Gostaria de ajudar oferecendo transporte solidário para consultas veterinárias ou apoio em ações do projeto.",
   },
   {
     titulo: "Contribuição financeira",
@@ -134,7 +134,7 @@ export function gerarLinkWhatsappAjuda(
   const numero = sanitizarWhatsappE164(whatsapp);
   const categoria = TIPO_AJUDA_CONFIG[params.tipoAjuda].label;
   const linhas = [
-    `Olá, *${params.nomeDoador}*! Muito obrigado pelo carinho com os animais da *ONG Esperança Animal*. 🐾`,
+    `Olá, *${params.nomeDoador}*! Muito obrigado pelo carinho com os animais do *Projeto Esperança Animal*. 🐾`,
     "",
     `Recebemos sua oferta de ajuda (*${categoria}*) referente ao protocolo *${params.protocolo}* (${params.municipio}).`,
   ];

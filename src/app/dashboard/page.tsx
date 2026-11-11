@@ -71,7 +71,7 @@ export default async function DashboardPage() {
                 </span>
               </div>
               <p className="text-xs text-neutral-500 mt-0.5">
-                {user.email} • Patas em Dia / Esperança Animal
+                {user.email} • Projeto Esperança Animal
               </p>
             </div>
           </div>
@@ -99,7 +99,7 @@ export default async function DashboardPage() {
         </header>
 
         {/* ========================================================
-            MÓDULOS OPERACIONAIS DA ONG
+            MÓDULOS OPERACIONAIS DO PROJETO
         ======================================================== */}
         <div className="space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500">
@@ -230,7 +230,7 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            {/* Card: Blog & Notícias da ONG */}
+            {/* Card: Blog & Notícias do Projeto */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-200/80 flex flex-col justify-between hover:shadow-md transition group">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">

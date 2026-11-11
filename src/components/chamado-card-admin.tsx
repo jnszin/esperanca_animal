@@ -334,7 +334,7 @@ export function ChamadoCardAdmin({ chamado }: { chamado: ChamadoData }) {
         </div>
       </div>
 
-      {/* Campo de Parecer da ONG */}
+      {/* Campo de Parecer do Projeto */}
       {mostrarParecer && (
         <div className="pt-2 space-y-2">
           <textarea

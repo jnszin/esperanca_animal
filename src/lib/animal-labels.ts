@@ -105,7 +105,7 @@ export function gerarLinkWhatsappInteresseAnimal(params: {
   const porteTexto = formatarPorteAnimal(params.porte).toLowerCase();
   const idadeTexto = formatarIdadeAproximada(params.idadeEstimadaMeses);
   const msg = encodeURIComponent(
-    `Olá! Vi a ficha do pet *${params.nome}* (${porteTexto}, aprox. ${idadeTexto}) no portal da Esperança Animal e gostaria de mais informações sobre a adoção.`
+    `Olá! Vi a ficha do pet *${params.nome}* (${porteTexto}, aprox. ${idadeTexto}) no portal do Projeto Esperança Animal e gostaria de mais informações sobre a adoção.`
   );
   return `https://wa.me/${CONTATO_ONG_ADOCAO.whatsappE164}?text=${msg}`;
 }

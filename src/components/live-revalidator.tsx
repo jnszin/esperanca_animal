@@ -19,7 +19,7 @@ export function LiveRevalidator({ intervalMs = 45000 }: LiveRevalidatorProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // 1. Revalidação instantânea ao focar na janela/aba da ONG
+    // 1. Revalidação instantânea ao focar na janela/aba do projeto
     const handleFocus = () => {
       router.refresh();
     };

@@ -18,11 +18,11 @@ export function PublicHeader() {
             <PawPrint className="w-6 h-6" />
           </div>
           <div>
-            <span className="font-bold text-lg text-neutral-900 tracking-tight block leading-none">
-              Esperança Animal
+            <span className="font-bold text-base sm:text-lg text-neutral-900 tracking-tight block leading-none whitespace-nowrap">
+              Projeto Esperança Animal
             </span>
             <span className="text-[11px] text-emerald-700 font-medium">
-              Adoção & Proteção
+              Adoção &amp; Proteção Animal
             </span>
           </div>
         </Link>

@@ -42,11 +42,11 @@ export async function generateMetadata({
   });
 
   if (!animal) {
-    return { title: "Animal não encontrado | Esperança Animal" };
+    return { title: "Animal não encontrado | Projeto Esperança Animal" };
   }
 
   return {
-    title: `Adote ${animal.nome} | Esperança Animal`,
+    title: `Adote ${animal.nome} | Projeto Esperança Animal`,
     description: animal.historia.slice(0, 160),
   };
 }
@@ -156,7 +156,7 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
                     </span>
                   </div>
                   <p className="text-sm text-neutral-500 mt-1">
-                    {animal.raca} • Acolhido pela Esperança Animal
+                    {animal.raca} • Acolhido pelo Projeto Esperança Animal
                   </p>
                 </div>
 
@@ -322,7 +322,7 @@ export default async function AnimalSlugPage({ params }: AnimalSlugPageProps) {
                   </h3>
                   <p className="text-xs text-neutral-500 mt-1">
                     Quer tirar dúvidas sobre {animal.nome} ou agendar uma visita? Fale
-                    com a equipe da Esperança Animal:
+                    com a equipe do Projeto Esperança Animal:
                   </p>
                 </div>
 
