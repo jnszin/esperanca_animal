@@ -21,7 +21,7 @@ const navItems = [
   { href: "/chamados", label: "Pedir Resgate", icon: PhoneCall, accent: "text-red-500" },
   { href: "/castracao", label: "Castração / Vacina", icon: Syringe, accent: "text-teal-600" },
   { href: "/noticias", label: "Blog & Notícias", icon: Newspaper, accent: "text-amber-600" },
-  { href: "/doacoes", label: "Doar Pix", icon: Heart, accent: "text-amber-500" },
+  { href: "/ajude", label: "Ajude", icon: Heart, accent: "text-amber-500" },
 ];
 
 export function MobileNav() {

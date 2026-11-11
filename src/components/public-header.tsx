@@ -65,11 +65,11 @@ export function PublicHeader() {
             <span>Blog & Notícias</span>
           </Link>
           <Link
-            href="/doacoes"
+            href="/ajude"
             className="text-sm font-medium text-neutral-600 hover:text-amber-600 transition flex items-center gap-1.5 whitespace-nowrap"
           >
             <Heart className="w-4 h-4 text-amber-500 shrink-0" />
-            <span>Doar Pix</span>
+            <span>Ajude</span>
           </Link>
         </nav>
 

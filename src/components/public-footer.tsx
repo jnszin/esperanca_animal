@@ -40,8 +40,8 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/doacoes" className="hover:text-emerald-400 transition">
-                  Campanhas & Doação Pix
+                <Link href="/ajude" className="hover:text-emerald-400 transition">
+                  Ajude (Doações &amp; Insumos)
                 </Link>
               </li>
               <li>

@@ -431,18 +431,19 @@ export default async function HomePage() {
                   Não pode adotar agora? Você pode salvar uma vida hoje.
                 </h2>
                 <p className="text-sm text-neutral-400 leading-relaxed">
-                  Nossa ONG é mantida 100% por doações voluntárias da comunidade.
-                  Cada real doado via Pix vai direto para alimentação, cirurgias,
-                  vacinas e abrigo de animais resgatados.
+                  Nossa ONG é mantida 100% pelo apoio da comunidade. Você pode
+                  ajudar oferecendo ração, shampoos e itens de higiene,
+                  medicamentos, doações financeiras ou apoio em transporte e
+                  cuidado dos animais resgatados.
                 </p>
 
                 <div className="flex flex-wrap gap-4 pt-2">
                   <Link
-                    href="/doacoes"
+                    href="/ajude"
                     className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 flex items-center gap-2 text-sm transition"
                   >
                     <Heart className="w-4 h-4 fill-white" />
-                    <span>Fazer Doação Pix</span>
+                    <span>Ajude a ONG (Doações &amp; Insumos)</span>
                   </Link>
                   <Link
                     href="/castracao"

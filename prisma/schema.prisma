@@ -98,6 +98,29 @@ enum StatusSolicitacaoServico {
   CANCELADO
 }
 
+enum TipoAjudaONG {
+  RACAO
+  HIGIENE_LIMPEZA
+  MEDICAMENTOS
+  ACESSORIOS
+  FINANCEIRO
+  VOLUNTARIADO_TRANSPORTE
+  OUTROS
+}
+
+enum FormaEntregaAjuda {
+  POSSO_ENTREGAR
+  PRECISO_RETIRADA
+  A_COMBINAR
+}
+
+enum StatusOfertaAjuda {
+  NOVO
+  EM_CONTATO
+  RECEBIDO_AGRADECIDO
+  ARQUIVADO
+}
+
 // ==========================================
 // TABELAS PRINCIPAIS
 // ==========================================
@@ -119,6 +142,7 @@ model User {
   acolhimentosAtendidos ChamadoAcolhimento[]
   noticias              Noticia[]
   solicitacoesCastracao SolicitacaoCastracao[]
+  ofertasAjudaAtendidas OfertaAjuda[]
 
   @@map("usuarios")
 }
@@ -411,4 +435,31 @@ model SolicitacaoCastracao {
   @@index([status, createdAt])
   @@index([municipio])
   @@map("solicitacoes_castracao")
+}
+
+model OfertaAjuda {
+  id                String            @id @default(cuid())
+  protocolo         String            @unique // Ex: "AJU-2026-4190"
+
+  nomeDoador        String
+  whatsapp          String
+  municipio         String
+  bairro            String?
+  aceitouTermosLGPD Boolean           @default(true)
+
+  tipoAjuda         TipoAjudaONG
+  formaEntrega      FormaEntregaAjuda @default(A_COMBINAR)
+  mensagem          String            @db.Text
+
+  status            StatusOfertaAjuda @default(NOVO)
+  observacaoEquipe  String?           @db.Text
+  atendidoPorId     String?
+  atendidoPor       User?             @relation(fields: [atendidoPorId], references: [id], onDelete: SetNull)
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([status, createdAt])
+  @@index([tipoAjuda])
+  @@map("ofertas_ajuda")
 }
