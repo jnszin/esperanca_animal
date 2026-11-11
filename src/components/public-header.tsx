@@ -5,7 +5,6 @@ import {
   PhoneCall,
   LogIn,
   Newspaper,
-  BarChart3,
 } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
 
@@ -56,13 +55,6 @@ export function PublicHeader() {
           >
             <Newspaper className="w-4 h-4 text-amber-600 shrink-0" />
             <span>Blog & Notícias</span>
-          </Link>
-          <Link
-            href="/transparencia"
-            className="text-sm font-medium text-neutral-600 hover:text-emerald-700 transition flex items-center gap-1.5 whitespace-nowrap"
-          >
-            <BarChart3 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Transparência</span>
           </Link>
           <Link
             href="/doacoes"

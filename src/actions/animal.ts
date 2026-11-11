@@ -438,7 +438,6 @@ export async function excluirFotoAnimal(params: {
     revalidatePath(`/dashboard/animais/${params.animalId}/editar`);
     revalidatePath("/animais");
     revalidatePath("/dashboard/animais");
-    revalidatePath("/transparencia");
     revalidatePath("/");
 
     return { success: true };

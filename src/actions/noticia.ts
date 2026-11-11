@@ -189,7 +189,6 @@ export async function editarNoticia(formData: FormData): Promise<NoticiaActionRe
     revalidatePath("/noticias");
     revalidatePath(`/noticias/${noticiaAtualizada.slug}`);
     revalidatePath("/dashboard/noticias");
-    revalidatePath("/transparencia");
     revalidatePath("/");
 
     return { success: true, slug: noticiaAtualizada.slug };
@@ -227,7 +226,6 @@ export async function excluirNoticia(params: {
 
     revalidatePath("/noticias");
     revalidatePath("/dashboard/noticias");
-    revalidatePath("/transparencia");
     revalidatePath("/");
 
     return { success: true };

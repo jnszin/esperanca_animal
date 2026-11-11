@@ -11,7 +11,6 @@ import {
   Sparkles,
   ArrowRight,
   Newspaper,
-  BarChart3,
   Calendar,
   Clock,
 } from "lucide-react";
@@ -138,41 +137,31 @@ export default async function HomePage() {
                 </div>
 
                 {/* Métricas de Impacto */}
-                <div className="space-y-3 pt-8 border-t border-neutral-200/60 max-w-lg">
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <span className="block text-2xl font-black text-neutral-900">
-                        {totalVidasAcolhidas}
-                      </span>
-                      <span className="text-xs text-neutral-500 font-medium">
-                        Vidas Acolhidas
-                      </span>
-                    </div>
-                    <div>
-                      <span className="block text-2xl font-black text-emerald-600">
-                        {totalAdotados}
-                      </span>
-                      <span className="text-xs text-neutral-500 font-medium">
-                        Finais Felizes
-                      </span>
-                    </div>
-                    <div>
-                      <span className="block text-2xl font-black text-neutral-900">
-                        {pctVacinados}%
-                      </span>
-                      <span className="text-xs text-neutral-500 font-medium">
-                        Vacinados em Dia
-                      </span>
-                    </div>
+                <div className="grid grid-cols-3 gap-4 pt-8 border-t border-neutral-200/60 max-w-lg">
+                  <div>
+                    <span className="block text-2xl font-black text-neutral-900">
+                      {totalVidasAcolhidas}
+                    </span>
+                    <span className="text-xs text-neutral-500 font-medium">
+                      Vidas Acolhidas
+                    </span>
                   </div>
-                  <Link
-                    href="/transparencia"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition"
-                  >
-                    <BarChart3 className="w-3.5 h-3.5" />
-                    <span>Ver indicadores em tempo real na Transparência</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  <div>
+                    <span className="block text-2xl font-black text-emerald-600">
+                      {totalAdotados}
+                    </span>
+                    <span className="text-xs text-neutral-500 font-medium">
+                      Finais Felizes
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-2xl font-black text-neutral-900">
+                      {pctVacinados}%
+                    </span>
+                    <span className="text-xs text-neutral-500 font-medium">
+                      Vacinados em Dia
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -329,7 +318,7 @@ export default async function HomePage() {
         </section>
 
         {/* ========================================================
-            3.5. ÚLTIMAS DO NOSSO BLOG & TRANSPARÊNCIA
+            3.5. ÚLTIMAS DO NOSSO BLOG
         ======================================================== */}
         <section className="py-16 bg-neutral-50 border-t border-neutral-200/70">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -351,13 +340,6 @@ export default async function HomePage() {
                   <Newspaper className="w-4 h-4" />
                   <span>Ver todo o Blog</span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-                <Link
-                  href="/transparencia"
-                  className="px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold inline-flex items-center gap-1.5 transition"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  <span>Portal de Transparência</span>
                 </Link>
               </div>
             </div>
@@ -416,18 +398,18 @@ export default async function HomePage() {
               <div className="bg-white rounded-3xl border border-dashed border-neutral-200 p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="space-y-1 text-center sm:text-left">
                   <h3 className="text-base font-bold text-neutral-900">
-                    Novas histórias e prestações de impacto em breve no nosso Blog
+                    Novas histórias e projetos realizados em breve no nosso Blog
                   </h3>
                   <p className="text-xs text-neutral-500">
-                    Enquanto preparamos as próximas publicações, acompanhe os números em
-                    tempo real no Portal de Transparência.
+                    Enquanto preparamos as próximas publicações, conheça os animais
+                    disponíveis para adoção na nossa vitrine.
                   </p>
                 </div>
                 <Link
-                  href="/transparencia"
+                  href="/animais"
                   className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shrink-0 transition"
                 >
-                  Acessar Transparência
+                  Ver Vitrine de Adoção
                 </Link>
               </div>
             )}

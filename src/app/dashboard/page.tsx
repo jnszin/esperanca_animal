@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   PawPrint,
   LogOut,
-  BarChart3,
   HeartHandshake,
   ShieldAlert,
   CheckCircle2,
@@ -72,15 +71,6 @@ export default async function DashboardPage() {
             >
               <Globe className="w-4 h-4" />
               <span>Ver Site Público</span>
-            </Link>
-
-            <Link
-              href="/transparencia"
-              target="_blank"
-              className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition"
-            >
-              <BarChart3 className="w-4 h-4" />
-              <span>Portal de Transparência</span>
             </Link>
 
             <form action={logoutAction}>

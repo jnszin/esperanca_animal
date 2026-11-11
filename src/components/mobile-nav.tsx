@@ -11,7 +11,6 @@ import {
   PhoneCall,
   Heart,
   Newspaper,
-  BarChart3,
   LogIn,
 } from "lucide-react";
 
@@ -20,7 +19,6 @@ const navItems = [
   { href: "/animais", label: "Quero Adotar", icon: PawPrint, accent: "text-emerald-600" },
   { href: "/chamados", label: "Pedir Resgate", icon: PhoneCall, accent: "text-red-500" },
   { href: "/noticias", label: "Blog & Notícias", icon: Newspaper, accent: "text-amber-600" },
-  { href: "/transparencia", label: "Transparência", icon: BarChart3, accent: "text-emerald-700" },
   { href: "/doacoes", label: "Doar Pix", icon: Heart, accent: "text-amber-500" },
 ];
 
