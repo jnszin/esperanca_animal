@@ -112,6 +112,7 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
   };
 
   async function handleMudarStatus(novoStatus: StatusAnimal) {
+    const statusAnterior = status;
     setStatus(novoStatus);
     setLoadingStatus(true);
     setMsgSucesso(false);
@@ -126,9 +127,11 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
         setMsgSucesso(true);
         setTimeout(() => setMsgSucesso(false), 2500);
       } else {
+        setStatus(statusAnterior);
         alert("Erro ao atualizar: " + res.error);
       }
     } catch {
+      setStatus(statusAnterior);
       alert("Falha na comunicação com o servidor.");
     } finally {
       setLoadingStatus(false);
@@ -160,8 +163,13 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
 
   async function handleConfirmarArquivamento() {
     let motivoFinal = motivoSelecionado;
-    if (motivoSelecionado.startsWith("Outro") && outroMotivoTexto.trim()) {
-      motivoFinal = outroMotivoTexto.trim();
+    if (motivoSelecionado.startsWith("Outro")) {
+      const textoLimpo = outroMotivoTexto.trim();
+      if (textoLimpo.length < 3) {
+        alert("Descreva o motivo detalhadamente (mínimo 3 caracteres).");
+        return;
+      }
+      motivoFinal = textoLimpo;
     }
 
     setLoadingExclusao(true);
@@ -376,8 +384,14 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
         {animal.ativo && (
           <div className="pt-3 border-t border-neutral-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex flex-wrap items-center gap-2">
-              <label className="font-bold text-neutral-800">Status Operacional:</label>
+              <label
+                htmlFor={`status-${animal.id}`}
+                className="font-bold text-neutral-800"
+              >
+                Status Operacional:
+              </label>
               <select
+                id={`status-${animal.id}`}
                 value={status}
                 disabled={loadingStatus}
                 onChange={(e) => handleMudarStatus(e.target.value as StatusAnimal)}
@@ -414,7 +428,12 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
           MODAL DE CONFIRMAÇÃO DE EXCLUSÃO / ARQUIVAMENTO
       ======================================================== */}
       {modalExclusaoAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-950/50 backdrop-blur-xs animate-in fade-in duration-150">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`modal-arquivar-titulo-${animal.id}`}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-950/50 backdrop-blur-xs"
+        >
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-neutral-200 space-y-6 relative">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
@@ -422,7 +441,10 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-neutral-900">
+                  <h3
+                    id={`modal-arquivar-titulo-${animal.id}`}
+                    className="text-base sm:text-lg font-black text-neutral-900"
+                  >
                     Excluir / Arquivar Pet da Vitrine
                   </h3>
                   <p className="text-xs text-neutral-500">
@@ -434,6 +456,8 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
               <button
                 type="button"
                 onClick={() => setModalExclusaoAberto(false)}
+                aria-label="Fechar modal"
+                title="Fechar"
                 className="p-1 rounded-xl text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100"
               >
                 <X className="w-5 h-5" />
@@ -448,10 +472,17 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
               </p>
 
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-neutral-900 mb-1">
+                <p
+                  id={`motivo-label-${animal.id}`}
+                  className="block text-xs font-bold text-neutral-900 mb-1"
+                >
                   Selecione o Motivo da Remoção *
-                </label>
-                <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
+                </p>
+                <div
+                  role="radiogroup"
+                  aria-labelledby={`motivo-label-${animal.id}`}
+                  className="space-y-1.5 max-h-60 overflow-y-auto pr-1"
+                >
                   {MOTIVOS_PRONTOS.map((m) => {
                     const isSelected = motivoSelecionado === m;
                     return (
@@ -480,10 +511,14 @@ export function AnimalCardAdmin({ animal }: { animal: AnimalAdminData }) {
 
               {motivoSelecionado.startsWith("Outro") && (
                 <div className="pt-1">
-                  <label className="block text-xs font-bold text-neutral-900 mb-1.5">
+                  <label
+                    htmlFor={`outro-motivo-${animal.id}`}
+                    className="block text-xs font-bold text-neutral-900 mb-1.5"
+                  >
                     Descreva o motivo detalhadamente:
                   </label>
                   <textarea
+                    id={`outro-motivo-${animal.id}`}
                     rows={2}
                     value={outroMotivoTexto}
                     onChange={(e) => setOutroMotivoTexto(e.target.value)}

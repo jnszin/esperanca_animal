@@ -141,11 +141,17 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
     }
   }
 
-  function handleCopiarProtocolo() {
+  async function handleCopiarProtocolo() {
     if (!protocoloSucesso || typeof navigator === "undefined") return;
-    navigator.clipboard?.writeText(protocoloSucesso);
-    setCopiado(true);
-    setTimeout(() => setCopiado(false), 2500);
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(protocoloSucesso);
+        setCopiado(true);
+        setTimeout(() => setCopiado(false), 2500);
+      }
+    } catch {
+      // Navegador bloqueou acesso à área de transferência (ex.: contexto HTTP sem SSL)
+    }
   }
 
   function resetarFormulario() {
@@ -192,6 +198,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
             <button
               type="button"
               onClick={handleCopiarProtocolo}
+              aria-label="Copiar código do protocolo"
               className="p-2 rounded-xl bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-700 transition cursor-pointer"
               title="Copiar protocolo"
             >
@@ -308,11 +315,16 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-nome-tutor"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Nome Completo do Tutor *
             </label>
             <input
+              id="castracao-nome-tutor"
               type="text"
+              autoComplete="name"
               required
               value={nomeTutor}
               onChange={(e) => setNomeTutor(e.target.value)}
@@ -322,11 +334,16 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-whatsapp"
+              className="block text-xs font-bold text-neutral-800"
+            >
               WhatsApp para Aviso de Status (com DDD) *
             </label>
             <input
+              id="castracao-whatsapp"
               type="tel"
+              autoComplete="tel"
               required
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
@@ -355,11 +372,16 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
           <div className="sm:col-span-12 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-endereco"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Endereço Completo (Rua, Avenida, Número e Complemento) *
             </label>
             <input
+              id="castracao-endereco"
               type="text"
+              autoComplete="street-address"
               required
               value={endereco}
               onChange={(e) => setEndereco(e.target.value)}
@@ -369,10 +391,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-6 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-bairro"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Bairro *
             </label>
             <input
+              id="castracao-bairro"
               type="text"
               required
               value={bairro}
@@ -383,10 +409,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-6 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-municipio"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Município *
             </label>
             <input
+              id="castracao-municipio"
               type="text"
               required
               list="municipios-sugeridos"
@@ -422,10 +452,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
           <div className="sm:col-span-6 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-nome-pet"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Nome do Pet *
             </label>
             <input
+              id="castracao-nome-pet"
               type="text"
               required
               value={nomePet}
@@ -436,10 +470,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-3 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-especie"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Espécie *
             </label>
             <select
+              id="castracao-especie"
               value={especie}
               onChange={(e) => setEspecie(e.target.value as Especie)}
               className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -451,10 +489,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-3 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-sexo"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Sexo *
             </label>
             <select
+              id="castracao-sexo"
               value={sexo}
               onChange={(e) => setSexo(e.target.value as Sexo)}
               className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -465,10 +507,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-4 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-raca"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Raça *
             </label>
             <input
+              id="castracao-raca"
               type="text"
               required
               value={raca}
@@ -479,10 +525,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-4 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-peso"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Peso Aproximado do Pet (kg) *
             </label>
             <input
+              id="castracao-peso"
               type="text"
               inputMode="decimal"
               required
@@ -494,10 +544,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-4 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-idade"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Idade Estimada (Opcional)
             </label>
             <input
+              id="castracao-idade"
               type="text"
               value={idadeEstimada}
               onChange={(e) => setIdadeEstimada(e.target.value)}
@@ -507,9 +561,9 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-12 space-y-2">
-            <label className="block text-xs font-bold text-neutral-800">
+            <p className="block text-xs font-bold text-neutral-800">
               Foto do Animal *
-            </label>
+            </p>
             <p className="text-[11px] text-neutral-500">
               Anexe uma foto recente e nítida do pet para avaliação inicial da equipe
               (JPG, PNG ou WebP até 10 MB).
@@ -532,10 +586,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
                     <span>Foto selecionada e pronta para envio</span>
                   </p>
                   <div className="flex flex-wrap gap-2 pt-1">
-                    <label className="px-3 py-1.5 rounded-xl bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-800 text-xs font-semibold cursor-pointer transition inline-flex items-center gap-1.5">
+                    <label
+                      htmlFor="castracao-foto-pet"
+                      className="px-3 py-1.5 rounded-xl bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-800 text-xs font-semibold cursor-pointer transition inline-flex items-center gap-1.5"
+                    >
                       <Camera className="w-3.5 h-3.5" />
                       <span>Trocar Foto</span>
                       <input
+                        id="castracao-foto-pet"
                         ref={fileInputRef}
                         type="file"
                         accept="image/*"
@@ -555,7 +613,10 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
                 </div>
               </div>
             ) : (
-              <label className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl border-2 border-dashed border-neutral-300 hover:border-emerald-500 bg-neutral-50 hover:bg-emerald-50/40 text-center cursor-pointer transition">
+              <label
+                htmlFor="castracao-foto-pet"
+                className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl border-2 border-dashed border-neutral-300 hover:border-emerald-500 bg-neutral-50 hover:bg-emerald-50/40 text-center cursor-pointer transition"
+              >
                 <div className="w-11 h-11 rounded-2xl bg-white border border-neutral-200 text-emerald-600 flex items-center justify-center shadow-2xs">
                   <Upload className="w-5 h-5" />
                 </div>
@@ -568,6 +629,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
                   </span>
                 </div>
                 <input
+                  id="castracao-foto-pet"
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
@@ -579,10 +641,14 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
           </div>
 
           <div className="sm:col-span-12 space-y-1.5">
-            <label className="block text-xs font-bold text-neutral-800">
+            <label
+              htmlFor="castracao-observacoes"
+              className="block text-xs font-bold text-neutral-800"
+            >
               Observações de Saúde ou Cio Recente (Opcional)
             </label>
             <textarea
+              id="castracao-observacoes"
               rows={3}
               value={observacoesSaude}
               onChange={(e) => setObservacoesSaude(e.target.value)}
@@ -595,8 +661,12 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
 
       {/* LGPD E ENVIO */}
       <div className="pt-4 border-t border-neutral-100 space-y-5">
-        <label className="flex items-start gap-3 p-4 rounded-2xl bg-neutral-50 border border-neutral-200 cursor-pointer">
+        <label
+          htmlFor="castracao-lgpd"
+          className="flex items-start gap-3 p-4 rounded-2xl bg-neutral-50 border border-neutral-200 cursor-pointer"
+        >
           <input
+            id="castracao-lgpd"
             type="checkbox"
             checked={aceitouTermosLGPD}
             onChange={(e) => setAceitouTermosLGPD(e.target.checked)}
