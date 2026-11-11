@@ -132,22 +132,32 @@ export function ConsultaProtocoloCastracao({
         <div className="pt-4 border-t border-neutral-100 space-y-6">
           {/* Cabeçalho do Resultado */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-50 p-4 rounded-2xl border border-neutral-200/80">
-            <div className="space-y-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-white border border-neutral-200 text-neutral-900">
-                  {resultado.protocolo}
-                </span>
-                <span
-                  className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${servicoInfo.badge}`}
-                >
-                  {servicoInfo.label}
-                </span>
+            <div className="flex items-center gap-3.5">
+              {resultado.fotoPetUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={resultado.fotoPetUrl}
+                  alt={resultado.nomePet}
+                  className="w-14 h-14 rounded-2xl object-cover border border-neutral-200 shrink-0"
+                />
+              ) : null}
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono font-black text-sm px-2.5 py-1 rounded-lg bg-white border border-neutral-200 text-neutral-900">
+                    {resultado.protocolo}
+                  </span>
+                  <span
+                    className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${servicoInfo.badge}`}
+                  >
+                    {servicoInfo.label}
+                  </span>
+                </div>
+                <p className="text-xs text-neutral-600 pt-1">
+                  Pet <strong className="text-neutral-900">{resultado.nomePet}</strong> (
+                  {ESPECIE_PET_LABEL[resultado.especie]} • {SEXO_PET_LABEL[resultado.sexo]} •{" "}
+                  {resultado.pesoKg} kg) • Tutor(a): <strong>{resultado.primeiroNomeTutor}</strong>
+                </p>
               </div>
-              <p className="text-xs text-neutral-600 pt-1">
-                Pet <strong className="text-neutral-900">{resultado.nomePet}</strong> (
-                {ESPECIE_PET_LABEL[resultado.especie]} • {SEXO_PET_LABEL[resultado.sexo]} •{" "}
-                {resultado.pesoKg} kg) • Tutor(a): <strong>{resultado.primeiroNomeTutor}</strong>
-              </p>
             </div>
 
             <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 self-start sm:self-center">

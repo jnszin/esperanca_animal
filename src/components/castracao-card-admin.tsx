@@ -45,6 +45,7 @@ export interface CastracaoAdminDTO {
   pesoKg: number;
   idadeEstimada: string | null;
   tipoServico: TipoServicoPet;
+  fotoPetUrl: string | null;
   observacoesSaude: string | null;
   status: StatusSolicitacaoServico;
   avisoStatus: string | null;
@@ -209,12 +210,34 @@ export function CastracaoCardAdmin({ item }: { item: CastracaoAdminDTO }) {
             </span>
           </div>
 
-          <div>
-            <h3 className="text-lg font-black text-neutral-900">{item.nomePet}</h3>
-            <p className="text-xs text-neutral-600">
-              {ESPECIE_PET_LABEL[item.especie]} • {SEXO_PET_LABEL[item.sexo]}
-              {item.idadeEstimada ? ` • ${item.idadeEstimada}` : ""}
-            </p>
+          <div className="flex items-center gap-3.5">
+            {item.fotoPetUrl ? (
+              <a
+                href={item.fotoPetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Abrir foto em tamanho real"
+                className="w-16 h-16 rounded-2xl overflow-hidden border border-neutral-200 bg-white shrink-0 hover:opacity-90 transition shadow-2xs"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.fotoPetUrl}
+                  alt={`Foto de ${item.nomePet}`}
+                  className="w-full h-full object-cover"
+                />
+              </a>
+            ) : (
+              <div className="w-16 h-16 rounded-2xl bg-white border border-neutral-200 flex items-center justify-center text-neutral-300 shrink-0">
+                <PawPrint className="w-6 h-6" />
+              </div>
+            )}
+            <div>
+              <h3 className="text-lg font-black text-neutral-900">{item.nomePet}</h3>
+              <p className="text-xs text-neutral-600">
+                {ESPECIE_PET_LABEL[item.especie]} • {SEXO_PET_LABEL[item.sexo]}
+                {item.idadeEstimada ? ` • ${item.idadeEstimada}` : ""}
+              </p>
+            </div>
           </div>
 
           {item.observacoesSaude && (

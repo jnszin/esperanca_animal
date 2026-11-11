@@ -392,6 +392,8 @@ model SolicitacaoCastracao {
   pesoKg           Decimal                  @db.Decimal(5, 2)
   idadeEstimada    String?
   tipoServico      TipoServicoPet           @default(CASTRACAO)
+  fotoPetUrl       String?
+  fotoPetKey       String?
   observacoesSaude String?                  @db.Text
 
   // Andamento de Protocolo (Aviso de Status)

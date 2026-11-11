@@ -19,7 +19,12 @@ export interface UploadResult {
   keyStorage: string;
 }
 
-export type StorageFolder = "animais" | "chamados" | "campanhas" | "noticias";
+export type StorageFolder =
+  | "animais"
+  | "chamados"
+  | "campanhas"
+  | "noticias"
+  | "castracoes";
 
 /**
  * Processa a imagem bruta no backend usando Sharp:

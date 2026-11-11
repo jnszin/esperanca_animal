@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { criarSolicitacaoCastracao } from "@/actions/castracao";
 import {
   MUNICIPIOS_SUGERIDOS,
@@ -8,6 +8,7 @@ import {
 } from "@/lib/castracao-labels";
 import { Especie, Sexo, TipoServicoPet } from "@prisma/client";
 import {
+  Camera,
   CheckCircle2,
   Copy,
   Loader2,
@@ -16,7 +17,9 @@ import {
   Search,
   ShieldCheck,
   Syringe,
+  Upload,
   User,
+  X,
 } from "lucide-react";
 
 interface FormCastracaoProps {
@@ -37,6 +40,9 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
   const [pesoKg, setPesoKg] = useState("");
   const [idadeEstimada, setIdadeEstimada] = useState("");
   const [observacoesSaude, setObservacoesSaude] = useState("");
+  const [fotoPet, setFotoPet] = useState<File | null>(null);
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [aceitouTermosLGPD, setAceitouTermosLGPD] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -44,9 +50,55 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
   const [protocoloSucesso, setProtocoloSucesso] = useState<string | null>(null);
   const [copiado, setCopiado] = useState(false);
 
+  useEffect(() => {
+    return () => {
+      if (fotoPreview) {
+        URL.revokeObjectURL(fotoPreview);
+      }
+    };
+  }, [fotoPreview]);
+
+  function handleFotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Selecione um arquivo de imagem válido (JPG, PNG ou WebP).");
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError("A foto do animal deve ter no máximo 10 MB.");
+      return;
+    }
+
+    setError(null);
+    if (fotoPreview) {
+      URL.revokeObjectURL(fotoPreview);
+    }
+    setFotoPet(file);
+    setFotoPreview(URL.createObjectURL(file));
+  }
+
+  function handleRemoverFoto() {
+    if (fotoPreview) {
+      URL.revokeObjectURL(fotoPreview);
+    }
+    setFotoPet(null);
+    setFotoPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+
+    if (!fotoPet) {
+      setError("Por favor, anexe uma foto do animal antes de enviar o cadastro.");
+      return;
+    }
 
     if (!aceitouTermosLGPD) {
       setError("Você precisa aceitar os termos de consentimento e LGPD.");
@@ -70,6 +122,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
       if (observacoesSaude.trim()) {
         formData.append("observacoesSaude", observacoesSaude);
       }
+      formData.append("fotoPet", fotoPet);
       formData.append("aceitouTermosLGPD", String(aceitouTermosLGPD));
 
       const res = await criarSolicitacaoCastracao(formData);
@@ -99,6 +152,7 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
     setPesoKg("");
     setIdadeEstimada("");
     setObservacoesSaude("");
+    handleRemoverFoto();
     setError(null);
   }
 
@@ -433,6 +487,78 @@ export function FormCastracao({ onVerProtocolo }: FormCastracaoProps) {
               placeholder="Ex: 8 meses ou 2 anos"
               className="w-full px-4 py-3 rounded-xl border border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
+          </div>
+
+          <div className="sm:col-span-12 space-y-2">
+            <label className="block text-xs font-bold text-neutral-800">
+              Foto do Animal *
+            </label>
+            <p className="text-[11px] text-neutral-500">
+              Anexe uma foto recente e nítida do pet para avaliação inicial da equipe
+              (JPG, PNG ou WebP até 10 MB).
+            </p>
+
+            {fotoPreview ? (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-2xl bg-neutral-50 border border-neutral-200">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={fotoPreview}
+                  alt="Pré-visualização do animal"
+                  className="w-28 h-28 rounded-2xl object-cover border border-neutral-300 shadow-xs shrink-0"
+                />
+                <div className="space-y-2 flex-1 min-w-0">
+                  <p className="text-xs font-bold text-neutral-800 truncate">
+                    {fotoPet?.name}
+                  </p>
+                  <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Foto selecionada e pronta para envio</span>
+                  </p>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <label className="px-3 py-1.5 rounded-xl bg-white border border-neutral-300 hover:bg-neutral-100 text-neutral-800 text-xs font-semibold cursor-pointer transition inline-flex items-center gap-1.5">
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Trocar Foto</span>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFotoChange}
+                        className="sr-only"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleRemoverFoto}
+                      className="px-3 py-1.5 rounded-xl bg-red-50 border border-red-200 hover:bg-red-100 text-red-700 text-xs font-semibold cursor-pointer transition inline-flex items-center gap-1"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Remover</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center gap-2 p-6 rounded-2xl border-2 border-dashed border-neutral-300 hover:border-emerald-500 bg-neutral-50 hover:bg-emerald-50/40 text-center cursor-pointer transition">
+                <div className="w-11 h-11 rounded-2xl bg-white border border-neutral-200 text-emerald-600 flex items-center justify-center shadow-2xs">
+                  <Upload className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-neutral-800 block">
+                    Clique aqui para anexar a foto do pet
+                  </span>
+                  <span className="text-[11px] text-neutral-500">
+                    Tire ou selecione uma imagem do rosto/corpo inteiro do animal
+                  </span>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFotoChange}
+                  className="sr-only"
+                />
+              </label>
+            )}
           </div>
 
           <div className="sm:col-span-12 space-y-1.5">

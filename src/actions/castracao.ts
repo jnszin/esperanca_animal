@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { uploadImageToR2 } from "@/lib/storage";
 import {
   atualizarStatusCastracaoSchema,
   castracaoSchema,
@@ -34,6 +35,7 @@ export interface ProtocoloPublicoDTO {
   pesoKg: number;
   municipio: string;
   tipoServico: TipoServicoPet;
+  fotoPetUrl: string | null;
   status: StatusSolicitacaoServico;
   avisoStatus: string | null;
   dataAgendamento: string | null;
@@ -115,6 +117,43 @@ export async function criarSolicitacaoCastracao(
       };
     }
 
+    const fotoFile = formData.get("fotoPet") as File | null;
+    if (!fotoFile || fotoFile.size === 0) {
+      return {
+        success: false,
+        error: "Por favor, anexe uma foto nítida do animal.",
+      };
+    }
+
+    if (!fotoFile.type.startsWith("image/")) {
+      return {
+        success: false,
+        error: "O arquivo anexado deve ser uma imagem válida (JPG, PNG ou WebP).",
+      };
+    }
+
+    if (fotoFile.size > 10 * 1024 * 1024) {
+      return {
+        success: false,
+        error: "A foto do animal deve ter no máximo 10 MB.",
+      };
+    }
+
+    let fotoPetUrl: string;
+    let fotoPetKey: string;
+    try {
+      const buffer = Buffer.from(await fotoFile.arrayBuffer());
+      const uploadRes = await uploadImageToR2(buffer, "castracoes", fotoFile.name);
+      fotoPetUrl = uploadRes.url;
+      fotoPetKey = uploadRes.keyStorage;
+    } catch (uploadErr) {
+      console.error("[CASTRACAO_FOTO_UPLOAD_ERROR]", uploadErr);
+      return {
+        success: false,
+        error: "Não foi possível processar a foto do animal. Tente outra imagem.",
+      };
+    }
+
     const protocolo = await gerarProtocoloUnicoCastracao();
 
     await prisma.solicitacaoCastracao.create({
@@ -132,6 +171,8 @@ export async function criarSolicitacaoCastracao(
         pesoKg: payload.pesoKg,
         idadeEstimada: payload.idadeEstimada || null,
         tipoServico: payload.tipoServico,
+        fotoPetUrl,
+        fotoPetKey,
         observacoesSaude: payload.observacoesSaude || null,
         status: StatusSolicitacaoServico.REGISTRADO,
         avisoStatus: STATUS_SERVICO_CONFIG.REGISTRADO.avisoPadrao,
@@ -181,6 +222,7 @@ export async function consultarProtocoloCastracao(
         pesoKg: true,
         municipio: true,
         tipoServico: true,
+        fotoPetUrl: true,
         status: true,
         avisoStatus: true,
         dataAgendamento: true,
@@ -211,6 +253,7 @@ export async function consultarProtocoloCastracao(
         pesoKg: Number(registro.pesoKg),
         municipio: registro.municipio,
         tipoServico: registro.tipoServico,
+        fotoPetUrl: registro.fotoPetUrl,
         status: registro.status,
         avisoStatus: registro.avisoStatus,
         dataAgendamento: registro.dataAgendamento

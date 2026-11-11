@@ -33,6 +33,7 @@ export default async function DashboardCastracoesPage() {
     pesoKg: Number(r.pesoKg),
     idadeEstimada: r.idadeEstimada,
     tipoServico: r.tipoServico,
+    fotoPetUrl: r.fotoPetUrl,
     observacoesSaude: r.observacoesSaude,
     status: r.status,
     avisoStatus: r.avisoStatus,
