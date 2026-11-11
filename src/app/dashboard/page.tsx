@@ -6,8 +6,6 @@ import {
   PawPrint,
   LogOut,
   HeartHandshake,
-  ShieldAlert,
-  CheckCircle2,
   PhoneCall,
   ArrowRight,
   Heart,
@@ -363,45 +361,6 @@ export default async function DashboardPage() {
                   </Link>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Resumo de Segurança e Defesa em Profundidade */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-neutral-200/60">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200/80 flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-900">Edge Middleware</h3>
-              <p className="text-xs text-neutral-500 mt-1">
-                Sessão JWT validada em memória na borda sem queries ao PostgreSQL.
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200/80 flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <HeartHandshake className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-900">Defesa em Profundidade</h3>
-              <p className="text-xs text-neutral-500 mt-1">
-                Server Actions checam cargo antes de qualquer transação com o Prisma.
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200/80 flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-              <ShieldAlert className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-neutral-900">Acesso Administrativo Único</h3>
-              <p className="text-xs text-neutral-500 mt-1">
-                Sessão única criptografada e proteção estrita para a administração da ONG.
-              </p>
             </div>
           </div>
         </div>
