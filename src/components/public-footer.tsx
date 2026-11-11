@@ -35,6 +35,11 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/castracao" className="hover:text-emerald-400 transition">
+                  Castração &amp; Vacinação (Protocolo)
+                </Link>
+              </li>
+              <li>
                 <Link href="/doacoes" className="hover:text-emerald-400 transition">
                   Campanhas & Doação Pix
                 </Link>

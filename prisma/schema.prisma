@@ -83,6 +83,21 @@ enum StatusDoacao {
   CANCELADO
 }
 
+enum TipoServicoPet {
+  CASTRACAO
+  VACINACAO
+  CASTRACAO_E_VACINACAO
+}
+
+enum StatusSolicitacaoServico {
+  REGISTRADO
+  EM_ANALISE
+  APROVADO_FILA
+  AGENDADO
+  REALIZADO
+  CANCELADO
+}
+
 // ==========================================
 // TABELAS PRINCIPAIS
 // ==========================================
@@ -103,6 +118,7 @@ model User {
   adocoesAvaliadas      SolicitacaoAdocao[]
   acolhimentosAtendidos ChamadoAcolhimento[]
   noticias              Noticia[]
+  solicitacoesCastracao SolicitacaoCastracao[]
 
   @@map("usuarios")
 }
@@ -352,4 +368,45 @@ model Noticia {
   @@index([publicado, createdAt])
   @@index([slug])
   @@map("noticias")
+}
+
+model SolicitacaoCastracao {
+  id               String                   @id @default(cuid())
+  protocolo        String                   @unique // Ex: "CAS-2026-4812"
+
+  // Dados do Tutor
+  nomeTutor        String
+  whatsapp         String
+  aceitouTermosLGPD Boolean                 @default(true)
+  ipOrigem         String?
+
+  // Endereço & Município
+  endereco         String
+  bairro           String
+  municipio        String
+
+  // Dados do Pet & Serviço
+  nomePet          String
+  especie          Especie
+  sexo             Sexo
+  pesoKg           Decimal                  @db.Decimal(5, 2)
+  idadeEstimada    String?
+  tipoServico      TipoServicoPet           @default(CASTRACAO)
+  observacoesSaude String?                  @db.Text
+
+  // Andamento de Protocolo (Aviso de Status)
+  status           StatusSolicitacaoServico @default(REGISTRADO)
+  avisoStatus      String?                  @db.Text
+  dataAgendamento  DateTime?
+  localAtendimento String?
+
+  avaliadoPorId    String?
+  avaliadoPor      User?                    @relation(fields: [avaliadoPorId], references: [id], onDelete: SetNull)
+
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+
+  @@index([status, createdAt])
+  @@index([municipio])
+  @@map("solicitacoes_castracao")
 }

@@ -5,6 +5,7 @@ import {
   PhoneCall,
   LogIn,
   Newspaper,
+  Syringe,
 } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
 
@@ -28,7 +29,7 @@ export function PublicHeader() {
         </Link>
 
         {/* Links Principais */}
-        <nav className="hidden md:flex items-center md:gap-4 lg:gap-6">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
           <Link
             href="/"
             className="text-sm font-medium text-neutral-600 hover:text-emerald-700 transition whitespace-nowrap"
@@ -48,6 +49,13 @@ export function PublicHeader() {
           >
             <PhoneCall className="w-4 h-4 text-red-500 shrink-0" />
             <span>Pedir Resgate</span>
+          </Link>
+          <Link
+            href="/castracao"
+            className="text-sm font-medium text-neutral-600 hover:text-teal-700 transition flex items-center gap-1.5 whitespace-nowrap"
+          >
+            <Syringe className="w-4 h-4 text-teal-600 shrink-0" />
+            <span>Castração / Vacina</span>
           </Link>
           <Link
             href="/noticias"

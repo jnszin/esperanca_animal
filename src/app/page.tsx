@@ -11,6 +11,7 @@ import {
   Sparkles,
   ArrowRight,
   Newspaper,
+  Syringe,
   Calendar,
   Clock,
 } from "lucide-react";
@@ -442,6 +443,13 @@ export default async function HomePage() {
                   >
                     <Heart className="w-4 h-4 fill-white" />
                     <span>Fazer Doação Pix</span>
+                  </Link>
+                  <Link
+                    href="/castracao"
+                    className="px-6 py-3.5 bg-neutral-800 hover:bg-neutral-700 text-white font-bold rounded-xl border border-neutral-700 flex items-center gap-2 text-sm transition"
+                  >
+                    <Syringe className="w-4 h-4 text-teal-400" />
+                    <span>Solicitar Castração / Vacina</span>
                   </Link>
                 </div>
               </div>

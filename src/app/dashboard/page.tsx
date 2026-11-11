@@ -13,6 +13,7 @@ import {
   Heart,
   Globe,
   Newspaper,
+  Syringe,
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -32,6 +33,10 @@ export default async function DashboardPage() {
   });
 
   const totalNoticias = await prisma.noticia.count();
+
+  const castracoesPendentes = await prisma.solicitacaoCastracao.count({
+    where: { status: { in: ["REGISTRADO", "EM_ANALISE"] } },
+  });
 
   return (
     <div className="min-h-screen bg-neutral-100/60 p-6 md:p-10">
@@ -93,7 +98,7 @@ export default async function DashboardPage() {
             Módulos Operacionais & Atendimento
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Card: Central de Chamados de Resgate */}
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-200/80 flex flex-col justify-between hover:shadow-md transition group relative overflow-hidden">
               <div className="space-y-4">
@@ -260,6 +265,49 @@ export default async function DashboardPage() {
                     className="text-neutral-400 hover:text-neutral-700"
                   >
                     Ver Blog ↗
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Card: Castração & Vacinação */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-200/80 flex flex-col justify-between hover:shadow-md transition group">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center">
+                    <Syringe className="w-6 h-6" />
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-semibold">
+                    {castracoesPendentes} em fila
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-base font-bold text-neutral-900 group-hover:text-teal-700 transition">
+                    Castração &amp; Vacinação
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
+                    Cadastro por município, controle de protocolos e envio de aviso
+                    direto para o WhatsApp do tutor.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-6 space-y-2">
+                <Link
+                  href="/dashboard/castracoes"
+                  className="w-full py-2.5 px-4 bg-teal-50 hover:bg-teal-600 text-teal-800 hover:text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition"
+                >
+                  <span>Gerenciar Castração &amp; Vacina</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <div className="flex items-center justify-end px-1 text-[11px]">
+                  <Link
+                    href="/castracao"
+                    target="_blank"
+                    className="text-neutral-400 hover:text-neutral-700"
+                  >
+                    Formulário público ↗
                   </Link>
                 </div>
               </div>
