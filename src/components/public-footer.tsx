@@ -57,16 +57,28 @@ export function PublicFooter() {
             <h4 className="text-sm font-semibold text-white mb-4">Atendimento</h4>
             <ul className="space-y-3 text-xs text-neutral-400">
               <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-emerald-500" />
-                <span>WhatsApp com Notificações n8n</span>
+                <Phone className="w-4 h-4 text-emerald-500 shrink-0" />
+                <a
+                  href="https://wa.me/5527992814152"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-400 transition"
+                >
+                  WhatsApp: (27) 99281-4152
+                </a>
               </li>
               <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-emerald-500" />
-                <span>contato@esperancaanimal.ong.br</span>
+                <Mail className="w-4 h-4 text-emerald-500 shrink-0" />
+                <a
+                  href="mailto:Danny-j-o@hotmail.com"
+                  className="hover:text-emerald-400 transition break-all"
+                >
+                  Danny-j-o@hotmail.com
+                </a>
               </li>
               <li className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-emerald-500" />
-                <span>Espírito Santo, Brasil</span>
+                <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>Vitória, Espírito Santo, Brasil</span>
               </li>
             </ul>
           </div>
