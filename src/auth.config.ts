@@ -3,8 +3,8 @@ import type { Role } from "@prisma/client";
 
 export const authConfig: NextAuthConfig = {
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: "/admin",
+    error: "/admin",
   },
   session: {
     strategy: "jwt",

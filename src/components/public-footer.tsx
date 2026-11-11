@@ -49,11 +49,6 @@ export function PublicFooter() {
                   Blog & Projetos da ONG
                 </Link>
               </li>
-              <li>
-                <Link href="/login" className="hover:text-emerald-400 transition">
-                  Painel Administrativo
-                </Link>
-              </li>
             </ul>
           </div>
 

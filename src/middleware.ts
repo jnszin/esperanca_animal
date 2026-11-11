@@ -8,7 +8,8 @@ export default auth((req) => {
   const { nextUrl } = req;
   const isDashboardRoute = nextUrl.pathname.startsWith("/dashboard");
   const isWebhookRoute = nextUrl.pathname.startsWith("/api/webhooks");
-  const isAuthRoute = nextUrl.pathname.startsWith("/login");
+  const isAdminRoute =
+    nextUrl.pathname === "/admin" || nextUrl.pathname.startsWith("/admin/");
 
   // ========================================================
   // 1. BLINDAGEM DE WEBHOOKS (EDGE RUNTIME)
@@ -42,9 +43,9 @@ export default auth((req) => {
 
   if (isDashboardRoute) {
     if (!isLoggedIn) {
-      const loginUrl = new URL("/login", nextUrl.origin);
-      loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
-      return NextResponse.redirect(loginUrl);
+      const adminLoginUrl = new URL("/admin", nextUrl.origin);
+      adminLoginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
+      return NextResponse.redirect(adminLoginUrl);
     }
 
     // Rotas restritas exclusivamente para ADMIN
@@ -60,9 +61,16 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // 3. Usuário já logado tentando acessar /login -> redireciona para /dashboard
-  if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl.origin));
+  // 3. Acesso à rota dedicada /admin:
+  // Se já estiver logado, redireciona para /dashboard; subrotas de /admin sem sessão retornam para /admin
+  if (isAdminRoute) {
+    if (isLoggedIn) {
+      return NextResponse.redirect(new URL("/dashboard", nextUrl.origin));
+    }
+    if (nextUrl.pathname.startsWith("/admin/")) {
+      return NextResponse.redirect(new URL("/admin", nextUrl.origin));
+    }
+    return NextResponse.next();
   }
 
   return NextResponse.next();
@@ -72,7 +80,8 @@ export const config = {
   matcher: [
     "/dashboard/:path*",
     "/api/webhooks/:path*",
-    "/login",
+    "/admin",
+    "/admin/:path*",
   ],
 };
 

@@ -12,7 +12,6 @@ import {
   Heart,
   Newspaper,
   Syringe,
-  LogIn,
 } from "lucide-react";
 
 const navItems = [
@@ -81,17 +80,6 @@ export function MobileNav() {
                 </Link>
               );
             })}
-
-            <div className="pt-2 mt-2 border-t border-neutral-100">
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-bold transition"
-              >
-                <LogIn className="w-4 h-4" />
-                <span>Área da ONG</span>
-              </Link>
-            </div>
           </nav>
         </div>
       )}

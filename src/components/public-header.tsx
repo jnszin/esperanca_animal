@@ -3,7 +3,6 @@ import {
   PawPrint,
   Heart,
   PhoneCall,
-  LogIn,
   Newspaper,
   Syringe,
 } from "lucide-react";
@@ -73,17 +72,8 @@ export function PublicHeader() {
           </Link>
         </nav>
 
-        {/* Acesso Admin & Menu Mobile */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <Link
-            href="/login"
-            className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-700 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200/80 transition whitespace-nowrap"
-          >
-            <LogIn className="w-4 h-4" />
-            <span>Área da ONG</span>
-          </Link>
-          <MobileNav />
-        </div>
+        {/* Menu Mobile */}
+        <MobileNav />
       </div>
     </header>
   );

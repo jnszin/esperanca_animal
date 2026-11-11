@@ -61,5 +61,5 @@ export async function loginAction(data: LoginInput): Promise<LoginActionResult> 
 }
 
 export async function logoutAction() {
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirectTo: "/admin" });
 }
