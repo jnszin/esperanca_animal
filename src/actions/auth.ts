@@ -3,6 +3,7 @@
 import { signIn, signOut } from "@/auth";
 import { loginSchema, LoginInput } from "@/schemas/auth";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 
 export type LoginActionResult = {
   success: boolean;
@@ -61,5 +62,6 @@ export async function loginAction(data: LoginInput): Promise<LoginActionResult> 
 }
 
 export async function logoutAction() {
-  await signOut({ redirectTo: "/admin" });
+  await signOut({ redirect: false });
+  redirect("/admin");
 }
