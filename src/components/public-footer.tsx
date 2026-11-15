@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PawPrint, Heart, Shield, Phone, Mail, MapPin } from "lucide-react";
+import { PawPrint, Heart, Shield, Phone, Mail, MapPin, ExternalLink } from "lucide-react";
 
 export function PublicFooter() {
   return (
@@ -102,10 +102,20 @@ export function PublicFooter() {
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
           <p>© {new Date().getFullYear()} Projeto Esperança Animal. Todos os direitos reservados.</p>
-          <div className="flex items-center gap-1 text-neutral-400">
+          <div className="flex items-center gap-1.5 text-neutral-400">
             <span>Desenvolvido com</span>
             <Heart className="w-3.5 h-3.5 text-red-500 inline fill-red-500" />
-            <span>para salvar vidas.</span>
+            <span>e tecnologia por</span>
+            <a
+              href="https://pachyx.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group font-bold text-neutral-200 hover:text-emerald-400 underline-offset-4 hover:underline transition-colors inline-flex items-center gap-1"
+              title="Pachyx - Desenvolvimento de Software e Soluções Digitais"
+            >
+              <span>Pachyx</span>
+              <ExternalLink className="w-3 h-3 text-neutral-500 group-hover:text-emerald-400 transition-colors" />
+            </a>
           </div>
         </div>
       </div>
