@@ -71,12 +71,33 @@ async function main() {
     },
   });
 
+  // Desativa e revoga imediatamente qualquer outro administrador anterior
+  // e as contas de demonstração iniciais (admin@esperancaanimal.ong.br e voluntario)
+  const desativados = await prisma.user.updateMany({
+    where: {
+      id: { not: admin.id },
+      OR: [
+        { cargo: Role.ADMIN },
+        { email: "admin@esperancaanimal.ong.br" },
+        { email: "voluntario@esperancaanimal.ong.br" },
+      ],
+    },
+    data: {
+      ativo: false,
+      cargo: Role.VOLUNTARIO,
+      senhaHash: "$2a$10$DISABLED_ACCOUNT_NEVER_MATCHES_BCRYPT_HASH",
+    },
+  });
+
   console.log("\n------------------------------------------");
   console.log("✅ Credenciais salvas com sucesso!");
   console.log(`👤 Nome:  ${admin.nome}`);
   console.log(`📧 E-mail: ${admin.email}`);
   console.log(`🔑 Senha: [Atualizada com criptografia bcrypt]`);
   console.log(`🛡️ Cargo:  ADMIN (Ativo)`);
+  if (desativados.count > 0) {
+    console.log(`🚫 Contas antigas desativadas: ${desativados.count} usuário(s) revogado(s)`);
+  }
   console.log("------------------------------------------");
   console.log("👉 Já pode entrar pelo painel: /admin\n");
 }

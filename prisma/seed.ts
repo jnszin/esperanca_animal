@@ -6,27 +6,35 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Iniciando seed do banco de dados na VPS...");
 
-  // 1. Criar Administrador Padrão
-  const adminEmail = "admin@esperancaanimal.ong.br";
-  const adminSenhaHash = await bcrypt.hash("Admin@123456", 10);
-
-  const admin = await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: {
-      cargo: Role.ADMIN,
-      ativo: true,
-    },
-    create: {
-      nome: "Administrador Esperança Animal",
-      email: adminEmail,
-      senhaHash: adminSenhaHash,
-      cargo: Role.ADMIN,
-      whatsapp: "5527999990001",
-      ativo: true,
-    },
+  // 1. Criar Administrador Padrão (apenas se não houver nenhum admin ativo)
+  let admin = await prisma.user.findFirst({
+    where: { cargo: Role.ADMIN, ativo: true },
   });
 
-  console.log(`✅ Administrador configurado: ${admin.email}`);
+  if (!admin) {
+    const adminEmail = "admin@esperancaanimal.ong.br";
+    const adminSenhaHash = await bcrypt.hash("Admin@123456", 10);
+
+    admin = await prisma.user.upsert({
+      where: { email: adminEmail },
+      update: {
+        cargo: Role.ADMIN,
+        ativo: true,
+      },
+      create: {
+        nome: "Administrador Esperança Animal",
+        email: adminEmail,
+        senhaHash: adminSenhaHash,
+        cargo: Role.ADMIN,
+        whatsapp: "5527999990001",
+        ativo: true,
+      },
+    });
+
+    console.log(`✅ Administrador configurado: ${admin.email}`);
+  } else {
+    console.log(`ℹ️ Administrador ativo já configurado (${admin.email}), preservando credenciais.`);
+  }
 
   // 2. Criar Voluntário de Demonstração
   const volEmail = "voluntario@esperancaanimal.ong.br";
