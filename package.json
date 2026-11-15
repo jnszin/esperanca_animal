@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "alterar-admin": "tsx prisma/alterar-admin.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

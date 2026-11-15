@@ -38,11 +38,11 @@ export const CANAIS_PREFEITURAS_RESGATE: CanalPrefeituraInfo[] = [
   {
     municipio: "Serra",
     canalPrincipal:
-      "Cães/Gatos: WhatsApp (27) 98166-0447 ou App Colab • Grande porte: (27) 3011-6909",
+      "WhatsApp: (27) 98166-0447 / App Colab • Médio/Grande porte (24h): (27) 3011-6909 • WhatsApp: (27) 99687-9023",
     caesEGatos:
-      "Programa ARCA / Semma no WhatsApp (27) 98166-0447 (8h às 18h, enviar fotos e local) ou App Colab. Dúvidas Bem-Estar Animal: (27) 3291-2399.",
+      "Programa ARCA / Semma — WhatsApp: (27) 98166-0447 (8h às 18h, enviar fotos e local) ou App Colab. Dúvidas Bem-Estar Animal: (27) 3291-2399.",
     grandePorte:
-      "Exclusivo para animais de grande porte (cavalos, bois) soltos em vias: (27) 3011-6909 (24h) ou WhatsApp (27) 99923-4312 / (27) 99687-9023.",
+      "Recolhimento de animais de médio e grande porte (24h): (27) 3011-6909. WhatsApp para grande porte (cavalos, bois): (27) 99687-9023 (ou (27) 99923-4312).",
     observacao: "Na BR-101, acionar a ECO101 pelo 0800 77 01 101.",
     badgeClass: "bg-amber-100 text-amber-900 border-amber-200",
   },

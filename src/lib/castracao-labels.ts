@@ -135,7 +135,7 @@ export function gerarMensagemWhatsappCastracao(
   const statusInfo = STATUS_SERVICO_CONFIG[params.status];
   const avisoTexto = params.avisoStatus?.trim() || statusInfo.avisoPadrao;
   const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://ong.visaoinfoco.cloud";
+    process.env.NEXT_PUBLIC_APP_URL || "https://projetoesperancaanimal.com.br";
   const linkAcompanhamento = `${baseUrl}/castracao?protocolo=${encodeURIComponent(
     params.protocolo
   )}`;
